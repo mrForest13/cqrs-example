@@ -17,7 +17,7 @@ trait CustomColumnTypes {
       language => language.code,
       string =>
         Language.fromCode(string).getOrElse {
-          throw new Exception(s"Cannot deserialize value $string to country object")
+          throw new Exception(s"Cannot deserialize value $string to language object")
       }
     )
 }

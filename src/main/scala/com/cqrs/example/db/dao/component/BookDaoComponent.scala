@@ -7,9 +7,11 @@ import com.cqrs.example.db.`type`.Language
 import com.cqrs.example.db.dao.BaseDAO
 import com.cqrs.example.db.model.{Author, Book, Category}
 import slick.jdbc.JdbcProfile
-import slick.lifted.ProvenShape
+import slick.lifted.{ForeignKeyQuery, ProvenShape}
 
 trait BookDaoComponent {
+
+  this: AuthorDaoComponent with CategoryDaoComponent =>
 
   val bookDao: BookDao
 
@@ -27,10 +29,16 @@ trait BookDaoComponent {
       def authorId: Rep[Id[Author]]     = column[Id[Author]]("AUTHOR_ID")
       def publisher: Rep[String]        = column[String]("PUBLISHER")
       def categoryId: Rep[Id[Category]] = column[Id[Category]]("CATEGORY_ID")
-      def language: Rep[Language]       = column[Language]("DESCRIPTION")
+      def language: Rep[Language]       = column[Language]("LANGUAGE")
       def description: Rep[String]      = column[String]("DESCRIPTION")
       def updatedDate: Rep[Timestamp]   = column[Timestamp]("UPDATED_DATE")
       def createdDate: Rep[Timestamp]   = column[Timestamp]("CREATED_DATE")
+
+      def authorFk: ForeignKeyQuery[authorDao.AuthorTable, Author] =
+        foreignKey("author_fk", authorId, authorDao.tableQuery)(_.id)
+
+      def categoryFk: ForeignKeyQuery[categoryDao.CategoryTable, Category] =
+        foreignKey("category_fk", categoryId, categoryDao.tableQuery)(_.id)
 
       def * : ProvenShape[Book] =
         (id.?, title, authorId, publisher, language, categoryId, description).mapTo[Book]

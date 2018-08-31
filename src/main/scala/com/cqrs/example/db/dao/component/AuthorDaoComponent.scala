@@ -5,6 +5,7 @@ import java.sql.Timestamp
 import com.cqrs.example.db.dao.BaseDAO
 import com.cqrs.example.db.model.Author
 import slick.jdbc.JdbcProfile
+import slick.lifted.ProvenShape
 
 trait AuthorDaoComponent {
 
@@ -25,7 +26,7 @@ trait AuthorDaoComponent {
       def updatedDate: Rep[Timestamp] = column[Timestamp]("UPDATED_DATE")
       def createdDate: Rep[Timestamp] = column[Timestamp]("CREATED_DATE")
 
-      def * = (id.?, firstName, lastName).mapTo[Author]
+      def * : ProvenShape[Author] = (id.?, firstName, lastName).mapTo[Author]
     }
   }
 }

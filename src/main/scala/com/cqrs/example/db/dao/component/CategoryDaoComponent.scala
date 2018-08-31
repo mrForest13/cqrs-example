@@ -20,6 +20,9 @@ trait CategoryDaoComponent {
 
     def tableQuery: TableQuery[CategoryTable] = TableQuery[CategoryTable]
 
+    def findByName(name: String): DBIO[Option[Category]] =
+      tableQuery.filter(_.name === name).result.headOption
+
     final class CategoryTable(tag: Tag) extends BaseTable(tag, "CATEGORY") {
 
       def name: Rep[String]           = column[String]("NAME")

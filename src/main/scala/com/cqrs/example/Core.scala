@@ -1,10 +1,15 @@
 package com.cqrs.example
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
+import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import com.cqrs.example.config.{AppConfig, Config}
-import com.cqrs.example.db.dao.component.{AuthorDaoComponent, BookDaoComponent, CategoryDaoComponent}
+import com.cqrs.example.db.dao.component._
 import com.cqrs.example.db.{DatabaseContext, HasJdbcProfile}
+import com.cqrs.example.handler.CommandHandlerComponent
+import com.cqrs.example.http.error.ExceptionHandlerDirective._
+import com.cqrs.example.http.{CommandRestApi, RestApi}
+import com.cqrs.example.service._
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 import slick.basic.DatabaseConfig
@@ -55,5 +60,38 @@ trait DataBaseLayer
 
   val authorDao: AuthorDao     = new AuthorDao()
   val categoryDao: CategoryDao = new CategoryDao()
-  val bookDao: BookDao = new BookDao()
+  val bookDao: BookDao         = new BookDao()
+}
+
+trait ServiceLayer
+    extends AuthorServiceComponent
+    with CategoryServiceComponent
+    with BookServiceComponent {
+
+  this: DataBaseLayer with Core =>
+
+  val authorService: AuthorService     = new AuthorServiceImpl
+  val categoryService: CategoryService = new CategoryServiceImpl
+  val bookService: BookService         = new BookServiceImpl
+}
+
+trait HandlerLayer extends CommandHandlerComponent {
+
+  this: ServiceLayer with Core =>
+
+  val commandHandler: ActorRef = system.actorOf(CommandHandler.apply, CommandHandler.name)
+}
+
+trait RestApiLayer extends RestApi {
+
+  this: HandlerLayer =>
+
+  val commandRestApi: RestApi = new CommandRestApi(commandHandler)
+
+  val routes: Route = handleExceptions(exceptionHandler) {
+    Seq(
+      commandRestApi
+    ).map(_.routes)
+      .reduceLeft(_ ~ _)
+  }
 }
