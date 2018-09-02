@@ -6,7 +6,7 @@ import com.cqrs.example.{Core, EventHandlerLayer, WriteDatabaseLayer}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.cqrs.example.es.BookDocument
-import com.cqrs.example.handler.model.InsertBookToReadDb
+import com.cqrs.example.handler.model.InsertBookToReadDbEvent
 import scala.concurrent.duration._
 
 import scala.concurrent.Future
@@ -30,18 +30,18 @@ trait BookWriteServiceComponent {
     def add(book: Book): Future[Unit] = {
 
       val action = for {
-        author <- authorDao.findById(book.authorId).map { elem =>
-          if (elem.isDefined) throw NotFoundException(s"Author does not exists") else elem.get
+        author <- authorDao.findById(book.authorId).map {
+          _.getOrElse(throw NotFoundException(s"Author does not exists"))
         }
-        category <- categoryDao.findById(book.categoryId).map { elem =>
-          if (elem.isDefined) throw NotFoundException(s"Category does not exists") else elem.get
+        category <- categoryDao.findById(book.categoryId).map {
+          _.getOrElse(throw NotFoundException(s"Category does not exists"))
         }
         _ <- bookDao.insert(book)
       } yield new BookDocument(book, author, category)
 
       for {
         bookDoc <- db.run(action.transactionally)
-        _       <- eventHandler ? InsertBookToReadDb(bookDoc)
+        _       <- eventHandler ? InsertBookToReadDbEvent(bookDoc)
       } yield ()
     }
   }

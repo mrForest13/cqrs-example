@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, Props}
 import akka.event.LoggingReceive
 import com.cqrs.example.WriteServiceLayer
 import com.cqrs.example.db.model.{Author, Book, Category}
-import com.cqrs.example.handler.model.{AddAuthor, AddBook, AddCategory}
+import com.cqrs.example.handler.model.{AddAuthorCommand, AddBookCommand, AddCategoryCommand}
 import com.cqrs.example.db.Id
 import akka.pattern.pipe
 import com.cqrs.example.http.model.{AuthorContent, BookContent, CategoryContent}
@@ -28,9 +28,9 @@ trait CommandHandlerComponent {
     }
 
     def receive: Receive = LoggingReceive {
-      case AddAuthor(content)         => addAuthor(content)
-      case AddCategory(content)       => addCategory(content)
-      case AddBook(authorId, content) => addBook(authorId, content)
+      case AddAuthorCommand(content)         => addAuthor(content)
+      case AddCategoryCommand(content)       => addCategory(content)
+      case AddBookCommand(authorId, content) => addBook(authorId, content)
     }
 
     private def addAuthor(content: AuthorContent): Unit = {

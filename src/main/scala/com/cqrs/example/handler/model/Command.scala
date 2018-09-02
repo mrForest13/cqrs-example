@@ -6,6 +6,6 @@ import com.cqrs.example.http.model.{AuthorContent, BookContent, CategoryContent}
 
 sealed trait Command
 
-final case class AddAuthor(content: AuthorContent)                   extends Command
-final case class AddCategory(content: CategoryContent)               extends Command
-final case class AddBook(authorId: Id[Author], content: BookContent) extends Command
+final case class AddAuthorCommand(content: AuthorContent)                   extends Command
+final case class AddCategoryCommand(content: CategoryContent)               extends Command
+final case class AddBookCommand(authorId: Id[Author], content: BookContent) extends Command

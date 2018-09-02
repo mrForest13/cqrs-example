@@ -6,9 +6,9 @@ import akka.stream.ActorMaterializer
 import com.cqrs.example.config.{AppConfig, Config}
 import com.cqrs.example.db.dao.component._
 import com.cqrs.example.db.{DatabaseContext, HasJdbcProfile}
-import com.cqrs.example.handler.{CommandHandlerComponent, EventHandlerComponent}
+import com.cqrs.example.handler._
 import com.cqrs.example.http.error.ExceptionHandlerDirective._
-import com.cqrs.example.http.{RestApi, WriteSideRestApi}
+import com.cqrs.example.http.{ReadSideRestApi, RestApi, WriteSideRestApi}
 import com.cqrs.example.service.read.{BookReadService, BookReadServiceComponent}
 import com.cqrs.example.service.write._
 import com.sksamuel.elastic4s.http.{ElasticClient, ElasticProperties}
@@ -76,7 +76,7 @@ trait ReadDatabaseLayer {
 
 trait ReadServiceLayer extends BookReadServiceComponent {
 
-  this: ReadDatabaseLayer =>
+  this: ReadDatabaseLayer with Core =>
 
   val bookReadService: BookReadService = new BookReadServiceImpl
 }
@@ -107,10 +107,11 @@ trait CommandHandlerLayer extends CommandHandlerComponent {
   val commandHandler: ActorRef = system.actorOf(CommandHandler.apply, CommandHandler.name)
 }
 
-trait QueryHandlerLayer {
+trait QueryHandlerLayer extends QueryHandlerComponent {
 
   this: ReadServiceLayer with Core =>
 
+  val queryHandler: ActorRef = system.actorOf(QueryHandler.apply, QueryHandler.name)
 }
 
 trait RestApiLayer extends RestApi {
@@ -118,10 +119,12 @@ trait RestApiLayer extends RestApi {
   this: CommandHandlerLayer with QueryHandlerLayer =>
 
   val writeSideRestApi: RestApi = new WriteSideRestApi(commandHandler)
+  val readSideRestApi: RestApi  = new ReadSideRestApi(queryHandler)
 
   val routes: Route = handleExceptions(exceptionHandler) {
     Seq(
-      writeSideRestApi
+      writeSideRestApi,
+      readSideRestApi
     ).map(_.routes)
       .reduceLeft(_ ~ _)
   }
