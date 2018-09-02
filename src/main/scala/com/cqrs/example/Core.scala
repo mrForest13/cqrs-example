@@ -6,10 +6,12 @@ import akka.stream.ActorMaterializer
 import com.cqrs.example.config.{AppConfig, Config}
 import com.cqrs.example.db.dao.component._
 import com.cqrs.example.db.{DatabaseContext, HasJdbcProfile}
-import com.cqrs.example.handler.CommandHandlerComponent
+import com.cqrs.example.handler.{CommandHandlerComponent, EventHandlerComponent}
 import com.cqrs.example.http.error.ExceptionHandlerDirective._
-import com.cqrs.example.http.{CommandRestApi, RestApi}
-import com.cqrs.example.service._
+import com.cqrs.example.http.{RestApi, WriteSideRestApi}
+import com.cqrs.example.service.read.{BookReadService, BookReadServiceComponent}
+import com.cqrs.example.service.write._
+import com.sksamuel.elastic4s.http.{ElasticClient, ElasticProperties}
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 import slick.basic.DatabaseConfig
@@ -40,7 +42,7 @@ trait BootedCore extends Core with StrictLogging {
   }
 }
 
-trait DataBaseLayer
+trait WriteDatabaseLayer
     extends HasJdbcProfile
     with DatabaseContext
     with AuthorDaoComponent
@@ -63,34 +65,63 @@ trait DataBaseLayer
   val bookDao: BookDao         = new BookDao()
 }
 
-trait ServiceLayer
-    extends AuthorServiceComponent
-    with CategoryServiceComponent
-    with BookServiceComponent {
+trait ReadDatabaseLayer {
 
-  this: DataBaseLayer with Core =>
+  this: Core =>
 
-  val authorService: AuthorService     = new AuthorServiceImpl
-  val categoryService: CategoryService = new CategoryServiceImpl
-  val bookService: BookService         = new BookServiceImpl
+  private val properties = ElasticProperties(Seq(config.elastic.node))
+
+  val esClient: ElasticClient = ElasticClient(properties)
 }
 
-trait HandlerLayer extends CommandHandlerComponent {
+trait ReadServiceLayer extends BookReadServiceComponent {
 
-  this: ServiceLayer with Core =>
+  this: ReadDatabaseLayer =>
+
+  val bookReadService: BookReadService = new BookReadServiceImpl
+}
+
+trait EventHandlerLayer extends EventHandlerComponent {
+
+  this: ReadServiceLayer with Core =>
+
+  val eventHandler: ActorRef = system.actorOf(EventHandler.apply, EventHandler.name)
+}
+
+trait WriteServiceLayer
+    extends AuthorWriteServiceComponent
+    with CategoryWriteServiceComponent
+    with BookWriteServiceComponent {
+
+  this: WriteDatabaseLayer with EventHandlerLayer with Core =>
+
+  val authorWriteService: AuthorWriteService     = new AuthorWriteServiceImpl
+  val categoryWriteService: CategoryWriteService = new CategoryWriteServiceImpl
+  val bookWriteService: BookWriteService         = new BookWriteServiceImpl
+}
+
+trait CommandHandlerLayer extends CommandHandlerComponent {
+
+  this: WriteServiceLayer with Core =>
 
   val commandHandler: ActorRef = system.actorOf(CommandHandler.apply, CommandHandler.name)
 }
 
+trait QueryHandlerLayer {
+
+  this: ReadServiceLayer with Core =>
+
+}
+
 trait RestApiLayer extends RestApi {
 
-  this: HandlerLayer =>
+  this: CommandHandlerLayer with QueryHandlerLayer =>
 
-  val commandRestApi: RestApi = new CommandRestApi(commandHandler)
+  val writeSideRestApi: RestApi = new WriteSideRestApi(commandHandler)
 
   val routes: Route = handleExceptions(exceptionHandler) {
     Seq(
-      commandRestApi
+      writeSideRestApi
     ).map(_.routes)
       .reduceLeft(_ ~ _)
   }

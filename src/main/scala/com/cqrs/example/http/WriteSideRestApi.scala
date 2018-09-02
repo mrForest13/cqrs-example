@@ -8,9 +8,9 @@ import akka.pattern.ask
 import com.cqrs.example.db.Id
 import com.cqrs.example.http.model.{AuthorContent, BookContent, CategoryContent}
 
-final class CommandRestApi(handler: ActorRef) extends RestApi {
+final class WriteSideRestApi(handler: ActorRef) extends RestApi {
 
-  def routes: Route = log(addAuthor ~ addCategory ~ addBook)
+  override def routes: Route = log(addAuthor ~ addCategory ~ addBook)
 
   def addAuthor: Route = {
     (post & path("cqrs" / "author")) {

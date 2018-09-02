@@ -9,9 +9,13 @@ object AppLauncher
     extends App
     with Core
     with BootedCore
-    with DataBaseLayer
-    with ServiceLayer
-    with HandlerLayer
+    with WriteDatabaseLayer
+    with ReadDatabaseLayer
+    with ReadServiceLayer
+    with EventHandlerLayer
+    with WriteServiceLayer
+    with CommandHandlerLayer
+    with QueryHandlerLayer
     with RestApiLayer {
 
   logger.info(s"Initializing REST api ...]")

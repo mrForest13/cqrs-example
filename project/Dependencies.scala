@@ -21,6 +21,12 @@ object Dependencies {
     "com.typesafe.slick" %% "slick-hikaricp"      % Version.slick
   )
 
+  val elastic4s = Seq(
+    "com.sksamuel.elastic4s" %% "elastic4s-core"       % Version.elastic4s,
+    "com.sksamuel.elastic4s" %% "elastic4s-http"       % Version.elastic4s,
+    "com.sksamuel.elastic4s" %% "elastic4s-spray-json" % Version.elastic4s
+  )
+
   val logging = Seq(
     "com.typesafe.scala-logging" %% "scala-logging"  % Version.scalaLogging,
     "ch.qos.logback"             % "logback-classic" % Version.logback
@@ -30,7 +36,7 @@ object Dependencies {
     "org.scalatest" %% "scalatest" % Version.scalaTest % Test
   )
 
-  lazy val all: Seq[ModuleID] = config ++ akka ++ db ++ logging ++ test
+  lazy val all: Seq[ModuleID] = config ++ akka ++ db ++ elastic4s ++ logging ++ test
 }
 
 object Version {
@@ -43,6 +49,7 @@ object Version {
   val akkaJson     = "1.21.0"
   val mysql        = "5.1.46"
   val slick        = "3.2.3"
+  val elastic4s    = "6.3.5"
   val scalaLogging = "3.9.0"
   val logback      = "1.2.3"
   val scalaTest    = "3.0.4"

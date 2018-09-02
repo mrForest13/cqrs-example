@@ -1,22 +1,22 @@
-package com.cqrs.example.service
+package com.cqrs.example.service.write
 
 import com.cqrs.example.db.model.Category
-import com.cqrs.example.{Core, DataBaseLayer}
 import com.cqrs.example.utils.ConflictException
+import com.cqrs.example.{Core, WriteDatabaseLayer}
 
 import scala.concurrent.Future
 
-trait CategoryService {
+trait CategoryWriteService {
   def add(category: Category): Future[Unit]
 }
 
-trait CategoryServiceComponent {
+trait CategoryWriteServiceComponent {
 
-  this: DataBaseLayer with Core =>
+  this: WriteDatabaseLayer with Core =>
 
-  val categoryService: CategoryService
+  val categoryWriteService: CategoryWriteService
 
-  class CategoryServiceImpl extends CategoryService {
+  class CategoryWriteServiceImpl extends CategoryWriteService {
 
     import profile.api._
 

@@ -1,19 +1,17 @@
 package com.cqrs.example.handler
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.event.LoggingReceive
-import com.cqrs.example.ServiceLayer
+import com.cqrs.example.WriteServiceLayer
 import com.cqrs.example.db.model.{Author, Book, Category}
 import com.cqrs.example.handler.model.{AddAuthor, AddBook, AddCategory}
-import akka.pattern.pipe
 import com.cqrs.example.db.Id
+import akka.pattern.pipe
 import com.cqrs.example.http.model.{AuthorContent, BookContent, CategoryContent}
 
 trait CommandHandlerComponent {
 
-  this: ServiceLayer =>
-
-  val commandHandler: ActorRef
+  this: WriteServiceLayer =>
 
   final class CommandHandler extends Actor with ActorLogging {
 
@@ -36,24 +34,15 @@ trait CommandHandlerComponent {
     }
 
     private def addAuthor(content: AuthorContent): Unit = {
-      val newAuthor = Author(None, content.firstName, content.lastName)
-      authorService.add(newAuthor) pipeTo sender; ()
+      authorWriteService.add(new Author(content)) pipeTo sender; ()
     }
 
     private def addCategory(content: CategoryContent): Unit = {
-      val newCategory = Category(None, content.name)
-      categoryService.add(newCategory) pipeTo sender; ()
+      categoryWriteService.add(new Category(content)) pipeTo sender; ()
     }
 
     private def addBook(authorId: Id[Author], content: BookContent): Unit = {
-      val newBook = Book(None,
-                         content.title,
-                         authorId,
-                         content.publisher,
-                         content.language,
-                         content.categoryId,
-                         content.description)
-      bookService.add(newBook) pipeTo sender; ()
+      bookWriteService.add(new Book(authorId, content)) pipeTo sender; ()
     }
   }
 
