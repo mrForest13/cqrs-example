@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  cqrs.elasticsearch:
+    image: elasticsearch:latest
+    ports:
+      - ${ELASTIC_PORT}:${ELASTIC_PORT}
+
+  cqrs.mysql:
+    image: mysql:5.7.22
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+    volumes:
+      - ./src/main/resources/sql:/docker-entrypoint-initdb.d/
+    ports:
+      - 3308:3306
+
+  cqrs.service:
+    image: com.example/cqrs-es-example:latest
+    depends_on:
+      - cqrs.mysql
+      - cqrs.elasticsearch
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    environment:
+      - APP_HOST=${APP_HOST}
+      - APP_PORT=${APP_PORT}
+      - ELASTIC_PROTOCOL=${ELASTIC_PROTOCOL}
+      - ELASTIC_HOST=${ELASTIC_HOST}
+      - ELASTIC_PORT=${ELASTIC_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_URL=${DB_URL}

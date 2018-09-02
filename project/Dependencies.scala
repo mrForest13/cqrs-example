@@ -32,11 +32,18 @@ object Dependencies {
     "ch.qos.logback"             % "logback-classic" % Version.logback
   )
 
-  val test = Seq(
-    "org.scalatest" %% "scalatest" % Version.scalaTest % Test
+  val other = Seq(
+    "com.wix" %% "accord-core" % Version.wix
   )
 
-  lazy val all: Seq[ModuleID] = config ++ akka ++ db ++ elastic4s ++ logging ++ test
+  val test = Seq(
+    "com.wix"                %% "accord-scalatest"   % Version.wix       % Test,
+    "org.scalatest"          %% "scalatest"          % Version.scalaTest % Test,
+    "com.sksamuel.elastic4s" %% "elastic4s-testkit"  % Version.elastic4s % Test,
+    "com.sksamuel.elastic4s" %% "elastic4s-embedded" % Version.elastic4s % Test
+  )
+
+  lazy val all: Seq[ModuleID] = config ++ akka ++ db ++ elastic4s ++ logging ++ other ++ test
 }
 
 object Version {
@@ -52,5 +59,6 @@ object Version {
   val elastic4s    = "6.3.5"
   val scalaLogging = "3.9.0"
   val logback      = "1.2.3"
+  val wix          = "0.7.2"
   val scalaTest    = "3.0.4"
 }

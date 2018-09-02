@@ -7,6 +7,7 @@ import com.cqrs.example.utils.ResponseLogger._
 import akka.pattern.ask
 import com.cqrs.example.db.Id
 import com.cqrs.example.http.model.{AuthorContent, BookContent, CategoryContent}
+import com.cqrs.example.utils.ValidationDirective._
 
 final class WriteSideRestApi(handler: ActorRef) extends RestApi {
 
@@ -15,8 +16,10 @@ final class WriteSideRestApi(handler: ActorRef) extends RestApi {
   def addAuthor: Route = {
     (post & path("cqrs" / "author")) {
       entity(as[AuthorContent]) { content =>
-        onSuccess(handler ? AddAuthorCommand(content)) { _ =>
-          complete(StatusCodes.Created)
+        validateReq(content).apply {
+          onSuccess(handler ? AddAuthorCommand(content)) { _ =>
+            complete(StatusCodes.Created)
+          }
         }
       }
     }
@@ -25,8 +28,10 @@ final class WriteSideRestApi(handler: ActorRef) extends RestApi {
   def addCategory: Route = {
     (post & path("cqrs" / "category")) {
       entity(as[CategoryContent]) { content =>
-        onSuccess(handler ? AddCategoryCommand(content)) { _ =>
-          complete(StatusCodes.Created)
+        validateReq(content).apply {
+          onSuccess(handler ? AddCategoryCommand(content)) { _ =>
+            complete(StatusCodes.Created)
+          }
         }
       }
     }
@@ -35,8 +40,10 @@ final class WriteSideRestApi(handler: ActorRef) extends RestApi {
   def addBook: Route = {
     (post & path("cqrs" / "author" / LongNumber / "book")) { authorId =>
       entity(as[BookContent]) { content =>
-        onSuccess(handler ? AddBookCommand(Id(authorId), content)) { _ =>
-          complete(StatusCodes.Created)
+        validateReq(content).apply {
+          onSuccess(handler ? AddBookCommand(Id(authorId), content)) { _ =>
+            complete(StatusCodes.Created)
+          }
         }
       }
     }

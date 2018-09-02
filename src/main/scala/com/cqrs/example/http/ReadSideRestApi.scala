@@ -8,6 +8,7 @@ import akka.pattern.ask
 import com.cqrs.example.es.BookDocument
 import com.cqrs.example.handler.model.GetBooks
 import spray.json.DefaultJsonProtocol._
+import com.cqrs.example.utils.ValidationDirective._
 
 class ReadSideRestApi(handler: ActorRef) extends RestApi {
 
@@ -16,8 +17,10 @@ class ReadSideRestApi(handler: ActorRef) extends RestApi {
   def getBooks: Route = {
     (get & path("cqrs" / "book")) {
       searchParams { params =>
-        onSuccess((handler ? GetBooks(params)).mapTo[IndexedSeq[BookDocument]]) { books =>
-          complete((StatusCodes.OK, books))
+        validateReq(params).apply {
+          onSuccess((handler ? GetBooks(params)).mapTo[IndexedSeq[BookDocument]]) { books =>
+            complete((StatusCodes.OK, books))
+          }
         }
       }
     }
@@ -31,6 +34,6 @@ class ReadSideRestApi(handler: ActorRef) extends RestApi {
       'category.as[String].?
     )
 
-    parameters(params).as(BookSearchParams)
+    parameters(params).as(BookSearchParams.apply)
   }
 }

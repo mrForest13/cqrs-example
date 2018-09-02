@@ -1,6 +1,6 @@
 package com.cqrs.example.utils
 
-import com.sksamuel.elastic4s.http.ElasticDsl.matchQuery
+import com.sksamuel.elastic4s.http.ElasticDsl._
 import com.sksamuel.elastic4s.http.{RequestFailure, RequestSuccess, Response}
 import com.sksamuel.elastic4s.searches.queries.matches.MatchQuery
 import com.typesafe.scalalogging.Logger
