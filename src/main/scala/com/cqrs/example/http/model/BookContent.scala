@@ -21,7 +21,7 @@ object BookContent {
   implicit val contentValidator: ValidationTransform.TransformedValidator[BookContent] =
     validator[BookContent] { book =>
       book.title has between(3, 20)
-      book.publisher has between(5, 20)
+      book.publisher has between(3, 20)
       book.description has between(5, 500)
       ()
     }

@@ -6,6 +6,7 @@ import akka.stream.ActorMaterializer
 import com.cqrs.example.config.{AppConfig, Config}
 import com.cqrs.example.db.dao.component._
 import com.cqrs.example.db.{DatabaseContext, HasJdbcProfile}
+import com.cqrs.example.es.ElasticsearchContext
 import com.cqrs.example.handler._
 import com.cqrs.example.http.error.ExceptionHandlerDirective._
 import com.cqrs.example.http.{ReadSideRestApi, RestApi, WriteSideRestApi}
@@ -52,7 +53,7 @@ trait WriteDatabaseLayer
   this: Core =>
 
   val databaseConfig: DatabaseConfig[JdbcProfile] =
-    DatabaseConfig.forConfig[JdbcProfile]("mysql", ConfigFactory.load(config.app.dbConfigFile))
+    DatabaseConfig.forConfig[JdbcProfile]("slick", ConfigFactory.load(config.app.dbConfigFile))
 
   val profile = databaseConfig.profile
 
@@ -65,7 +66,7 @@ trait WriteDatabaseLayer
   val bookDao: BookDao         = new BookDao()
 }
 
-trait ReadDatabaseLayer {
+trait ReadDatabaseLayer extends ElasticsearchContext {
 
   this: Core =>
 

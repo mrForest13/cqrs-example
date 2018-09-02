@@ -16,11 +16,17 @@ abstract class BaseDAO[E <: HasId[E]](val profile: JdbcProfile)
   def findById(id: Id[E]): DBIO[Option[E]] =
     tableQuery.filter(_.id === id).result.headOption
 
-  def insert(entity: E): DBIO[Int] =
-    tableQuery += entity
+  def insert(entity: E): DBIO[Id[E]] =
+    Queries.returningId += entity
 
   def update(entity: E): DBIO[Int] =
     Queries.findById(entity.id).update(entity)
+
+  def initTable(): DBIO[Unit] =
+    tableQuery.schema.create
+
+  def dropTable(): DBIO[Unit] =
+    tableQuery.schema.drop
 
   abstract class BaseTable(tag: Tag, name: String) extends Table[E](tag, name) {
 
@@ -37,5 +43,8 @@ abstract class BaseDAO[E <: HasId[E]](val profile: JdbcProfile)
 
     def findAll(limit: Int): Query[T, E, Seq] =
       tableQuery take limit
+
+    def returningId: JdbcProfile#ReturningInsertActionComposer[E, Id[E]] =
+      tableQuery returning tableQuery.map(_.id)
   }
 }

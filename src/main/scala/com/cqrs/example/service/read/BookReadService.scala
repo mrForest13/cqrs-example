@@ -1,7 +1,7 @@
 package com.cqrs.example.service.read
 
-import com.cqrs.example.{Core, ReadDatabaseLayer}
-import com.cqrs.example.es.BookDocument
+import com.cqrs.example.Core
+import com.cqrs.example.es.{BookDocument, ElasticsearchContext}
 import com.cqrs.example.http.model.BookSearchParams
 import com.sksamuel.elastic4s.http.ElasticDsl._
 import com.sksamuel.elastic4s.http.Response
@@ -19,7 +19,7 @@ trait BookReadService {
 
 trait BookReadServiceComponent {
 
-  this: ReadDatabaseLayer with Core =>
+  this: ElasticsearchContext with Core =>
 
   val bookReadService: BookReadService
 
