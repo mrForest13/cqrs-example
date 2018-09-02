@@ -2,7 +2,7 @@ import sbt.Keys.scalacOptions
 
 val nameSettings = Seq(
   organization := "com.example",
-  name := "cqrs-es-example",
+  name := "cqrs-example",
   version := "latest",
   scalaVersion := Version.scala
 )
@@ -36,7 +36,7 @@ lazy val dockerSettings = Seq(
 
 lazy val assemblySettings = Seq(
   mainClass in assembly := Some("com.cqrs.example.AppLauncher"),
-  assemblyJarName in assembly := "cqrs-es-example.jar",
+  assemblyJarName in assembly := "cqrs-example.jar",
 )
 
 val options = Seq(
@@ -55,7 +55,7 @@ val options = Seq(
   "-Ywarn-value-discard"
 )
 
-val `cqrs-es-example` = (project in file("."))
+val `cqrs-example` = (project in file("."))
   .enablePlugins(DockerPlugin)
   .enablePlugins(DockerComposePlugin)
   .settings(
