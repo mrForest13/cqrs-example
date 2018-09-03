@@ -38,8 +38,8 @@ trait BookReadServiceComponent {
       val req = search(BookDocument.indexName).bool {
         boolQuery().must(
           Seq(
-            optionRegexQuery("title", searchParams.title),
-            optionRegexQuery("author", searchParams.author),
+            optionRegexQuery("title", searchParams.title, (v: String) => v + ".*"),
+            optionRegexQuery("author", searchParams.author, (v: String) => v + ".*"),
             optionMatchQuery("publisher", searchParams.publisher),
             optionMatchQuery("category", searchParams.category)
           ).flatten

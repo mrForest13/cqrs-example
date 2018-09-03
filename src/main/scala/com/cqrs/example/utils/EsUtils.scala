@@ -9,12 +9,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object EsUtils {
 
+  type regex = String => String
+
   def optionMatchQuery(field: String, value: Option[Any]): Option[MatchQuery] = {
     value.map(matchQuery(field, _))
   }
 
-  def optionRegexQuery(field: String, value: Option[String]): Option[RegexQuery] = {
-    value.map(value => regexQuery(field, value.toLowerCase + ".*"))
+  def optionRegexQuery(field: String, value: Option[String], f: regex): Option[RegexQuery] = {
+    value.map(value => regexQuery(field, f(value.toLowerCase)))
   }
 
   implicit class ResponseHelper[U](response: Future[Response[U]]) {
