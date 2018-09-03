@@ -4,7 +4,6 @@ import com.cqrs.example.Core
 import com.cqrs.example.es.{BookDocument, ElasticsearchContext}
 import com.cqrs.example.http.model.BookSearchParams
 import com.sksamuel.elastic4s.http.ElasticDsl._
-import com.sksamuel.elastic4s.http.Response
 import com.sksamuel.elastic4s.http.index.IndexResponse
 import com.sksamuel.elastic4s.sprayjson._
 import com.typesafe.scalalogging.LazyLogging
