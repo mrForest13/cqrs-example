@@ -14,8 +14,8 @@ class CategoryValidationTest extends FlatSpec with Matchers with ResultMatchers 
 
   private val category = new CategoryContent(rand.nextString(10))
 
-  private val incorrectNameLow =  rand.nextString(2)
-  private val incorrectNameMax =  rand.nextString(16)
+  private val incorrectNameLow = rand.nextString(2)
+  private val incorrectNameMax = rand.nextString(16)
 
   "Category content event validator" should "return empty error list" in {
     validate(category) shouldBe Success

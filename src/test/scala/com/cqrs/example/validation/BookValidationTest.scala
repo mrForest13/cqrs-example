@@ -15,15 +15,15 @@ class BookValidationTest extends FlatSpec with Matchers with ResultMatchers {
   private val rand = new Random()
 
   private val book = new BookContent(rand.nextString(10),
-                                       rand.nextString(10),
-                                       Language.fromCode("PL").get,
-                                       Id(1),
-                                       rand.nextString(100))
+                                     rand.nextString(10),
+                                     Language.fromCode("PL").get,
+                                     Id(1),
+                                     rand.nextString(100))
 
-  private val incorrectTitleLow     = rand.nextString(2)
-  private val incorrectTitleMax    = rand.nextString(21)
-  private val incorrectPublisherLow = rand.nextString(2)
-  private val incorrectPublisherMax = rand.nextString(21)
+  private val incorrectTitleLow       = rand.nextString(2)
+  private val incorrectTitleMax       = rand.nextString(21)
+  private val incorrectPublisherLow   = rand.nextString(2)
+  private val incorrectPublisherMax   = rand.nextString(21)
   private val incorrectDescriptionLow = rand.nextString(4)
   private val incorrectDescriptionMax = rand.nextString(501)
 

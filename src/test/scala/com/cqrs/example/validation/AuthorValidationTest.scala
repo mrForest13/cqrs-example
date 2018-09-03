@@ -14,10 +14,10 @@ class AuthorValidationTest extends FlatSpec with Matchers with ResultMatchers {
 
   private val author = new AuthorContent(rand.nextString(10), rand.nextString(10))
 
-  private val incorrectFirstNameLow =  rand.nextString(2)
-  private val incorrectFirstNameMax =  rand.nextString(21)
-  private val incorrectLastNameLow   = rand.nextString(1)
-  private val incorrectLastNameMax   = rand.nextString(31)
+  private val incorrectFirstNameLow = rand.nextString(2)
+  private val incorrectFirstNameMax = rand.nextString(21)
+  private val incorrectLastNameLow  = rand.nextString(1)
+  private val incorrectLastNameMax  = rand.nextString(31)
 
   "Author content event validator" should "return empty error list" in {
     validate(author) shouldBe Success

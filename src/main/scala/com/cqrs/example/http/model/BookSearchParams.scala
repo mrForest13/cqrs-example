@@ -14,7 +14,7 @@ object BookSearchParams {
 
   private def validOption[T](min: Int, max: Int): Validator[Option[T]] = {
     case Some(v) => between(min, max).apply(v.toString.length)
-    case None => Success
+    case None    => Success
   }
 
   implicit val contentValidator: ValidationTransform.TransformedValidator[BookSearchParams] =
