@@ -2,6 +2,7 @@ package com.cqrs.example.utils
 
 import com.sksamuel.elastic4s.http.ElasticDsl._
 import com.sksamuel.elastic4s.http.{RequestFailure, RequestSuccess, Response}
+import com.sksamuel.elastic4s.searches.queries.RegexQuery
 import com.sksamuel.elastic4s.searches.queries.matches.MatchQuery
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -10,6 +11,10 @@ object EsUtils {
 
   def optionMatchQuery(field: String, value: Option[Any]): Option[MatchQuery] = {
     value.map(matchQuery(field, _))
+  }
+
+  def optionRegexQuery(field: String, value: Option[String]): Option[RegexQuery] = {
+    value.map(value => regexQuery(field, value.toLowerCase + ".*"))
   }
 
   implicit class ResponseHelper[U](response: Future[Response[U]]) {
