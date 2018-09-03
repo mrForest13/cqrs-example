@@ -7,8 +7,9 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.cqrs.example.es.BookDocument
 import com.cqrs.example.handler.model.InsertBookToReadDbEvent
-import scala.concurrent.duration._
+import com.sksamuel.elastic4s.http.index.IndexResponse
 
+import scala.concurrent.duration._
 import scala.concurrent.Future
 
 trait BookWriteService {
@@ -41,7 +42,7 @@ trait BookWriteServiceComponent {
 
       for {
         bookDoc <- db.run(action.transactionally)
-        _       <- eventHandler ? InsertBookToReadDbEvent(bookDoc)
+        _       <- (eventHandler ? InsertBookToReadDbEvent(bookDoc)).mapTo[IndexResponse]
       } yield ()
     }
   }

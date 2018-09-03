@@ -13,7 +13,7 @@ import com.cqrs.example.utils.EsUtils._
 import scala.concurrent.Future
 
 trait BookReadService {
-  def insert(book: BookDocument): Future[Response[IndexResponse]]
+  def insert(book: BookDocument): Future[IndexResponse]
   def find(searchParams: BookSearchParams): Future[IndexedSeq[BookDocument]]
 }
 
@@ -25,15 +25,13 @@ trait BookReadServiceComponent {
 
   class BookReadServiceImpl extends BookReadService with LazyLogging {
 
-    def insert(book: BookDocument): Future[Response[IndexResponse]] = {
+    def insert(book: BookDocument): Future[IndexResponse] = {
 
       val req = indexInto(BookDocument.indexName, BookDocument.mappingName).doc(book)
 
       logger.debug(s"Insert request: ${req.show}")
 
-      logResponse(logger, "Insert book document") {
-        esClient.execute(req)
-      }
+      esClient.execute(req).getResponse
     }
 
     def find(searchParams: BookSearchParams): Future[IndexedSeq[BookDocument]] = {
@@ -51,9 +49,7 @@ trait BookReadServiceComponent {
 
       logger.debug(s"Search request: ${req.show}")
 
-      logResponse(logger, s"Search book document by $searchParams") {
-        esClient.execute(req)
-      }.map(_.result.to[BookDocument])
+      esClient.execute(req).getResponse.map(_.to[BookDocument])
     }
   }
 }
