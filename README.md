@@ -2,6 +2,10 @@
 
 Cqrs example application
 
+## Rest Api Documentation
+
+Test using http://petstore.swagger.io/ and replace the swagger.json with http://APP_HOST:APP_PORT/api-docs/swagger.json
+
 ## Configuration
 
 You can specify environment variables via .env file (sample file in main directory)

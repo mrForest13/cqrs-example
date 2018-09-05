@@ -1,7 +1,7 @@
 package com.cqrs.example
 
 import akka.actor.{ActorRef, ActorSystem}
-import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.{Route, RouteConcatenation}
 import akka.stream.ActorMaterializer
 import com.cqrs.example.config.{AppConfig, Config}
 import com.cqrs.example.db.dao.component._
@@ -9,7 +9,8 @@ import com.cqrs.example.db.{DatabaseContext, HasJdbcProfile}
 import com.cqrs.example.es.ElasticsearchContext
 import com.cqrs.example.handler._
 import com.cqrs.example.http.error.ExceptionHandlerDirective._
-import com.cqrs.example.http.{ReadSideRestApi, RestApi, WriteSideRestApi}
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
+import com.cqrs.example.http.{ReadSideRestApi, RestApi, SwaggerDocRestApi, WriteSideRestApi}
 import com.cqrs.example.service.read.{BookReadService, BookReadServiceComponent}
 import com.cqrs.example.service.write._
 import com.sksamuel.elastic4s.http.{ElasticClient, ElasticProperties}
@@ -115,18 +116,25 @@ trait QueryHandlerLayer extends QueryHandlerComponent {
   val queryHandler: ActorRef = system.actorOf(QueryHandler.apply, QueryHandler.name)
 }
 
-trait RestApiLayer extends RestApi {
+trait RestApiLayer extends RestApi with RouteConcatenation {
 
-  this: CommandHandlerLayer with QueryHandlerLayer =>
+  this: CommandHandlerLayer with QueryHandlerLayer with Core =>
+
+  val host: String = config.http.host
+  val port: Int    = config.http.port
+
+  val swaggerDocRestApi: RestApi = new SwaggerDocRestApi(host, port)
 
   val writeSideRestApi: RestApi = new WriteSideRestApi(commandHandler)
   val readSideRestApi: RestApi  = new ReadSideRestApi(queryHandler)
 
   val routes: Route = handleExceptions(exceptionHandler) {
-    Seq(
+    cors() (Seq(
       writeSideRestApi,
-      readSideRestApi
+      readSideRestApi,
+      swaggerDocRestApi
     ).map(_.routes)
       .reduceLeft(_ ~ _)
+    )
   }
 }

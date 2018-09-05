@@ -20,9 +20,6 @@ object AppLauncher
 
   logger.info(s"Initializing REST api ...]")
 
-  val host: String = config.http.host
-  val port: Int    = config.http.port
-
   val bindingFuture = Http().bindAndHandle(log(routes), host, port)
 
   bindingFuture.onComplete {

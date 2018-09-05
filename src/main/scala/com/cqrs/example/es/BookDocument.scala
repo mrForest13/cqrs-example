@@ -1,15 +1,16 @@
 package com.cqrs.example.es
 
-import com.cqrs.example.db.`type`.Language
 import com.cqrs.example.db.model.{Author, Book, Category}
+import io.swagger.annotations.ApiModel
 import spray.json._
 import spray.json.DefaultJsonProtocol._
 
+@ApiModel(value = "Book basic information")
 final case class BookDocument(
   title: String,
   author: String,
   publisher: String,
-  language: Language,
+  language: String,
   category: String,
   description: String) {
 
@@ -18,7 +19,7 @@ final case class BookDocument(
       book.title,
       author.firstName + " " + author.lastName,
       book.publisher,
-      book.language,
+      book.language.name,
       category.name,
       book.description
     )

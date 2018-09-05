@@ -33,7 +33,9 @@ object Dependencies {
   )
 
   val other = Seq(
-    "com.wix" %% "accord-core" % Version.wix
+    "com.github.swagger-akka-http" %% "swagger-akka-http" % Version.swagger,
+    "ch.megard"                    %% "akka-http-cors"    % Version.cors,
+    "com.wix"                      %% "accord-core"       % Version.wix
   )
 
   val test = Seq(
@@ -64,6 +66,8 @@ object Version {
   val scalaLogging = "3.9.0"
   val logback      = "1.2.3"
   val log4j        = "2.11.1"
+  val swagger      = "1.0.0"
+  val cors         = "0.3.0"
   val wix          = "0.7.2"
   val scalaTest    = "3.0.4"
   val h2           = "1.4.197"
