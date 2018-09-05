@@ -7,10 +7,11 @@ import com.cqrs.example.handler.model.{AddAuthorCommand, AddBookCommand, AddCate
 import com.cqrs.example.utils.ResponseLogger._
 import akka.pattern.ask
 import com.cqrs.example.db.Id
+import com.cqrs.example.http.doc.WriteSideApi
 import com.cqrs.example.http.model.{AuthorContent, BookContent, CategoryContent}
 import com.cqrs.example.utils.ValidationDirective._
 
-final class WriteSideRestApi(handler: ActorRef) extends RestApi {
+final class WriteSideRestApi(handler: ActorRef) extends WriteSideApi with RestApi {
 
   override def routes: Route = log(addAuthor ~ addCategory ~ addBook)
 

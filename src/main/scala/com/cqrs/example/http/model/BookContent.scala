@@ -7,10 +7,15 @@ import spray.json.RootJsonFormat
 import spray.json.DefaultJsonProtocol._
 import com.wix.accord.dsl._
 import com.wix.accord.transform.ValidationTransform
+import io.swagger.annotations.{ApiModel, ApiModelProperty}
 
+import scala.annotation.meta.field
+
+@ApiModel(value = "Book content request")
 final case class BookContent(
   title: String,
   publisher: String,
+  @(ApiModelProperty @field)(dataType = "String", example = "PL")
   language: Language,
   categoryId: Id[Category],
   description: String)

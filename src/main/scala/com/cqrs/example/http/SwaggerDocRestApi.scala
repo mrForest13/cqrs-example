@@ -1,11 +1,12 @@
 package com.cqrs.example.http
 
+import com.cqrs.example.http.doc.{ReadSideDoc, WriteSideApi}
 import com.github.swagger.akka._
 import com.github.swagger.akka.model.Info
 
 class SwaggerDocRestApi(ip: String, port: Int) extends SwaggerHttpService with RestApi {
 
-  override val apiClasses: Set[Class[_]] = Set(classOf[ReadSideRestApi], classOf[WriteSideRestApi])
+  override val apiClasses: Set[Class[_]] = Set(classOf[ReadSideDoc], classOf[WriteSideApi])
 
   override val host: String = ip + ":" + port
   override val basePath     = "/"
