@@ -2,13 +2,13 @@ package com.cqrs.example.handler
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.event.LoggingReceive
-import com.cqrs.example.ReadServiceLayer
 import com.cqrs.example.handler.model.InsertBookToReadDbEvent
 import akka.pattern.pipe
+import com.cqrs.example.service.read.BookReadServiceComponent
 
 trait EventHandlerComponent {
 
-  this: ReadServiceLayer =>
+  this: BookReadServiceComponent =>
 
   val eventHandler: ActorRef
 

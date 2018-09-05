@@ -63,5 +63,7 @@ val `cqrs-example` = (project in file("."))
     assemblySettings,
     dockerSettings,
     scalacOptions ++= options,
-    libraryDependencies ++= Dependencies.all
+    libraryDependencies ++= Dependencies.all,
+
+    parallelExecution in Test := false,
   )

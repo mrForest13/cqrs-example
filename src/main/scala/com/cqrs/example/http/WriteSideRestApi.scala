@@ -1,4 +1,5 @@
 package com.cqrs.example.http
+
 import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route

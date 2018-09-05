@@ -1,7 +1,9 @@
 package com.cqrs.example.service.write
 
+import com.cqrs.example.db.dao.component.AuthorDaoComponent
 import com.cqrs.example.db.model.Author
-import com.cqrs.example.{Core, WriteDatabaseLayer}
+import com.cqrs.example.Core
+import com.cqrs.example.db.DatabaseContext
 
 import scala.concurrent.Future
 
@@ -11,7 +13,7 @@ trait AuthorWriteService {
 
 trait AuthorWriteServiceComponent {
 
-  this: WriteDatabaseLayer with Core =>
+  this: AuthorDaoComponent with DatabaseContext with Core =>
 
   val authorWriteService: AuthorWriteService
 

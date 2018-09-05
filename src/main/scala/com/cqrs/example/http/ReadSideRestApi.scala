@@ -1,4 +1,5 @@
 package com.cqrs.example.http
+
 import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directive1, Route}
@@ -10,7 +11,7 @@ import com.cqrs.example.handler.model.GetBooks
 import spray.json.DefaultJsonProtocol._
 import com.cqrs.example.utils.ValidationDirective._
 
-class ReadSideRestApi(handler: ActorRef) extends RestApi {
+final class ReadSideRestApi(handler: ActorRef) extends RestApi {
 
   override def routes: Route = log(getBooks)
 

@@ -2,10 +2,11 @@ package com.cqrs.example.service.write
 
 import com.cqrs.example.db.model.Book
 import com.cqrs.example.utils.NotFoundException
-import com.cqrs.example.{Core, EventHandlerLayer, WriteDatabaseLayer}
+import com.cqrs.example.{Core, WriteDatabaseLayer}
 import akka.pattern.ask
 import akka.util.Timeout
 import com.cqrs.example.es.BookDocument
+import com.cqrs.example.handler.EventHandlerComponent
 import com.cqrs.example.handler.model.InsertBookToReadDbEvent
 import com.sksamuel.elastic4s.http.index.IndexResponse
 
@@ -18,7 +19,7 @@ trait BookWriteService {
 
 trait BookWriteServiceComponent {
 
-  this: WriteDatabaseLayer with EventHandlerLayer with Core =>
+  this: WriteDatabaseLayer with EventHandlerComponent with Core =>
 
   val bookWriteService: BookWriteService
 

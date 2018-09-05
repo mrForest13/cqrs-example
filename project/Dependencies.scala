@@ -29,7 +29,7 @@ object Dependencies {
 
   val logging = Seq(
     "com.typesafe.scala-logging" %% "scala-logging"  % Version.scalaLogging,
-    "ch.qos.logback"             % "logback-classic" % Version.logback,
+    "ch.qos.logback"             % "logback-classic" % Version.logback
   )
 
   val other = Seq(
@@ -37,10 +37,14 @@ object Dependencies {
   )
 
   val test = Seq(
-    "com.wix"                  %% "accord-scalatest"    % Version.wix       % Test,
-    "org.scalatest"            %% "scalatest"           % Version.scalaTest % Test,
-    "com.typesafe.akka"        %% "akka-testkit"        % Version.akka      % Test,
-    "com.h2database"           % "h2"                   % Version.h2        % Test,
+    "org.scalatest"            %% "scalatest"          % Version.scalaTest % Test,
+    "com.sksamuel.elastic4s"   %% "elastic4s-testkit"  % Version.elastic4s % Test,
+    "com.sksamuel.elastic4s"   %% "elastic4s-embedded" % Version.elastic4s % Test,
+    "org.apache.logging.log4j" % "log4j-core"          % Version.log4j     % Test,
+    "org.apache.logging.log4j" % "log4j-api"           % Version.log4j     % Test,
+    "com.typesafe.akka"        %% "akka-testkit"       % Version.akka      % Test,
+    "com.wix"                  %% "accord-scalatest"   % Version.wix       % Test,
+    "com.h2database"           % "h2"                  % Version.h2        % Test
   )
 
   lazy val all: Seq[ModuleID] = config ++ akka ++ db ++ elastic4s ++ logging ++ other ++ test

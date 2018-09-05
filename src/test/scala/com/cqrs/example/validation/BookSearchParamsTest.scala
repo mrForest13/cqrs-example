@@ -23,7 +23,7 @@ class BookSearchParamsTest extends FlatSpec with Matchers with ResultMatchers {
   private val incorrectCategoryLow  = Some(rand.nextString(2))
   private val incorrectCategoryMax  = Some(rand.nextString(16))
 
-  "Author content event validator" should "return empty error list" in {
+  "Book search params content event validator" should "return empty error list" in {
     validate(params) shouldBe Success
   }
 

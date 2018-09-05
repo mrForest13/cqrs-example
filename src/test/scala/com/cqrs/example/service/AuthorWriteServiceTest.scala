@@ -1,11 +1,28 @@
 package com.cqrs.example.service
 
-import com.cqrs.example.CqrsTest
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import akka.testkit.{ImplicitSender, TestKit}
+import com.cqrs.example.WriteDbTest
 import com.cqrs.example.db.Id
 import com.cqrs.example.db.model.Author
+import com.cqrs.example.service.write.{AuthorWriteService, AuthorWriteServiceComponent}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
-class AuthorWriteServiceTest extends CqrsTest with BeforeAndAfterEach with BeforeAndAfterAll {
+import scala.concurrent.ExecutionContextExecutor
+
+class AuthorWriteServiceTest
+    extends TestKit(ActorSystem("cqrs-system-test"))
+    with ImplicitSender
+    with WriteDbTest
+    with AuthorWriteServiceComponent
+    with BeforeAndAfterEach
+    with BeforeAndAfterAll {
+
+  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+  implicit lazy val materializer: ActorMaterializer       = ActorMaterializer()
+
+  val authorWriteService: AuthorWriteService = new AuthorWriteServiceImpl
 
   override def beforeEach(): Unit = {
     authorDao.initScheme()
@@ -13,6 +30,11 @@ class AuthorWriteServiceTest extends CqrsTest with BeforeAndAfterEach with Befor
 
   override def afterEach(): Unit = {
     authorDao.dropScheme()
+  }
+
+  override def afterAll(): Unit = {
+    TestKit.shutdownActorSystem(system)
+    db.close()
   }
 
   "Author write service" should "return same element after insert new element" in {

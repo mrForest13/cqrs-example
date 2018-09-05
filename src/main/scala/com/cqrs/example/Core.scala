@@ -59,7 +59,7 @@ trait WriteDatabaseLayer
 
   import profile.api._
 
-  lazy val db: Database = databaseConfig.db
+  val db: Database = databaseConfig.db
 
   val authorDao: AuthorDao     = new AuthorDao()
   val categoryDao: CategoryDao = new CategoryDao()

@@ -1,8 +1,10 @@
 package com.cqrs.example.service.write
 
+import com.cqrs.example.db.{DatabaseContext, HasJdbcProfile}
+import com.cqrs.example.db.dao.component.CategoryDaoComponent
 import com.cqrs.example.db.model.Category
 import com.cqrs.example.utils.ConflictException
-import com.cqrs.example.{Core, WriteDatabaseLayer}
+import com.cqrs.example.Core
 
 import scala.concurrent.Future
 
@@ -12,7 +14,7 @@ trait CategoryWriteService {
 
 trait CategoryWriteServiceComponent {
 
-  this: WriteDatabaseLayer with Core =>
+  this: CategoryDaoComponent with DatabaseContext with HasJdbcProfile with Core =>
 
   val categoryWriteService: CategoryWriteService
 

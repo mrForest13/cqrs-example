@@ -5,10 +5,10 @@ import com.wix.accord.dsl._
 import com.wix.accord.transform.ValidationTransform
 
 final case class BookSearchParams(
-  title: Option[String],
-  author: Option[String],
-  publisher: Option[String],
-  category: Option[String])
+  title: Option[String] = None,
+  author: Option[String] = None,
+  publisher: Option[String] = None,
+  category: Option[String] = None)
 
 object BookSearchParams {
 
