@@ -11,6 +11,7 @@ import com.cqrs.example.es.ElasticsearchContext
 import com.cqrs.example.handler.EventHandlerComponent
 import com.cqrs.example.service.read.{BookReadService, BookReadServiceComponent}
 import com.cqrs.example.service.write._
+import com.cqrs.example.utils.NotFoundException
 import com.sksamuel.elastic4s.embedded.LocalNode
 import com.sksamuel.elastic4s.http.ElasticClient
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
@@ -63,9 +64,9 @@ class BookWriteServiceTest
     esClient.close()
   }
 
-  "Book write service" should "return same element after insert new element" in {
+  val pl: Language = Language.fromCode("PL").get
 
-    val pl = Language.fromCode("PL").get
+  "Book write service" should "return same element after insert new element" in {
 
     val author   = Author(None, "Jan", "Nowak")
     val category = Category(None, "Horror")
@@ -80,6 +81,34 @@ class BookWriteServiceTest
 
     whenReady(action) { result =>
       result.get shouldBe book.copy(id = Some(Id(1)))
+    }
+  }
+
+  it should "throw exception after insert if author does not exist" in {
+
+    val book = Book(None, "Example", Id(1), "publisher", pl, Id(1), "description")
+
+    val action = for {
+      result <- bookWriteService.add(book)
+    } yield result
+
+    whenReady(action.failed) { result =>
+      result shouldBe a[NotFoundException]
+    }
+  }
+
+  it should "throw exception after insert if category does not exist" in {
+
+    val author = Author(None, "Jan", "Nowak")
+    val book   = Book(None, "Example", Id(1), "publisher", pl, Id(1), "description")
+
+    val action = for {
+      _      <- authorWriteService.add(author)
+      result <- bookWriteService.add(book)
+    } yield result
+
+    whenReady(action.failed) { result =>
+      result shouldBe a[NotFoundException]
     }
   }
 }

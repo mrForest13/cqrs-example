@@ -33,10 +33,10 @@ trait BookWriteServiceComponent {
 
       val action = for {
         author <- authorDao.findById(book.authorId).map {
-          _.getOrElse(throw NotFoundException(s"Author does not exists"))
+          _.getOrElse(throw NotFoundException(s"Author does not exist"))
         }
         category <- categoryDao.findById(book.categoryId).map {
-          _.getOrElse(throw NotFoundException(s"Category does not exists"))
+          _.getOrElse(throw NotFoundException(s"Category does not exist"))
         }
         _ <- bookDao.insert(book)
       } yield new BookDocument(book, author, category)

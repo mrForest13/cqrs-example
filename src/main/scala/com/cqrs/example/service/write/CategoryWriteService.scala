@@ -26,7 +26,7 @@ trait CategoryWriteServiceComponent {
 
       val action = for {
         _ <- categoryDao.findByName(category.name).map { elem =>
-          if (elem.isDefined) throw ConflictException(s"Category already exists")
+          if (elem.isDefined) throw ConflictException(s"Category already exist")
         }
         _ <- categoryDao.insert(category)
       } yield ()
