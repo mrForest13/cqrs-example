@@ -1,5 +1,7 @@
 package com.cqrs.example.db
 
+import java.sql.Timestamp
+
 import spray.json.{JsNumber, JsValue, JsonFormat, deserializationError}
 
 final case class Id[A](value: Long) extends AnyVal
@@ -16,6 +18,9 @@ object Id {
   }
 }
 
-trait HasId[E] {
+trait Entity[E] {
   def id: Option[Id[E]]
+
+  def updatedDate: Option[Timestamp]
+  def createdDate: Option[Timestamp]
 }

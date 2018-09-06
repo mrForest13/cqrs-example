@@ -7,20 +7,22 @@ import com.cqrs.example._
 import com.cqrs.example.db.Id
 import com.cqrs.example.db.`type`.Language
 import com.cqrs.example.db.model.{Author, Book, Category}
-import com.cqrs.example.es.ElasticsearchContext
+import com.cqrs.example.es.{BookDocument, ElasticsearchContext}
 import com.cqrs.example.handler.EventHandlerComponent
 import com.cqrs.example.service.read.{BookReadService, BookReadServiceComponent}
 import com.cqrs.example.service.write._
 import com.cqrs.example.utils.NotFoundException
-import com.sksamuel.elastic4s.embedded.LocalNode
 import com.sksamuel.elastic4s.http.ElasticClient
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import scala.language.higherKinds
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 class BookWriteServiceTest
     extends TestKit(ActorSystem("cqrs-system-test"))
     with ImplicitSender
+    with MockFactory
     with WriteDbTest
     with ElasticsearchContext
     with BookReadServiceComponent
@@ -34,11 +36,9 @@ class BookWriteServiceTest
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit lazy val materializer: ActorMaterializer       = ActorMaterializer()
 
-  val localNode = LocalNode("mycluster", "/tmp/datapath")
+  val esClient: ElasticClient = mock[ElasticClient]
 
-  val esClient: ElasticClient = localNode.client(shutdownNodeOnClose = true)
-
-  val bookReadService: BookReadService = new BookReadServiceImpl
+  val bookReadService: BookReadService = mock[BookReadService]
 
   val eventHandler: ActorRef = system.actorOf(EventHandler.apply, EventHandler.name)
 
@@ -61,7 +61,6 @@ class BookWriteServiceTest
   override def afterAll(): Unit = {
     TestKit.shutdownActorSystem(system)
     db.close()
-    esClient.close()
   }
 
   val pl: Language = Language.fromCode("PL").get
@@ -71,6 +70,10 @@ class BookWriteServiceTest
     val author   = Author(None, "Jan", "Nowak")
     val category = Category(None, "Horror")
     val book     = Book(None, "Example", Id(1), "publisher", pl, Id(1), "description")
+
+    val bookDoc = new BookDocument(book, author, category)
+
+    bookReadService.insert _ expects bookDoc returning Future(EsHelper.emptyIndexRes)
 
     val action = for {
       _    <- authorWriteService.add(author)

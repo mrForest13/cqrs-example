@@ -128,13 +128,14 @@ trait RestApiLayer extends RestApi with RouteConcatenation {
   val writeSideRestApi: RestApi = new WriteSideRestApi(commandHandler)
   val readSideRestApi: RestApi  = new ReadSideRestApi(queryHandler)
 
-  val routes: Route = handleExceptions(exceptionHandler) {
-    cors() (Seq(
-      writeSideRestApi,
-      readSideRestApi,
-      swaggerDocRestApi
-    ).map(_.routes)
-      .reduceLeft(_ ~ _)
-    )
+  val routes: Route = cors() {
+    handleExceptions(exceptionHandler) {
+      Seq(
+        writeSideRestApi,
+        readSideRestApi,
+        swaggerDocRestApi
+      ).map(_.routes)
+        .reduceLeft(_ ~ _)
+    }
   }
 }

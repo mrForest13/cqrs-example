@@ -1,9 +1,11 @@
 package com.cqrs.example.db.dao
 
-import com.cqrs.example.db.{CustomColumnTypes, HasId, HasJdbcProfile, Id}
+import java.sql.Timestamp
+
+import com.cqrs.example.db.{CustomColumnTypes, Entity, HasJdbcProfile, Id}
 import slick.jdbc.JdbcProfile
 
-abstract class BaseDAO[E <: HasId[E]](val profile: JdbcProfile)
+abstract class BaseDAO[E <: Entity[E]](val profile: JdbcProfile)
     extends HasJdbcProfile
     with CustomColumnTypes {
 
@@ -31,6 +33,9 @@ abstract class BaseDAO[E <: HasId[E]](val profile: JdbcProfile)
   abstract class BaseTable(tag: Tag, name: String) extends Table[E](tag, name) {
 
     def id: Rep[Id[E]] = column[Id[E]]("id", O.PrimaryKey, O.AutoInc)
+
+    def updatedDate: Rep[Timestamp] = column[Timestamp]("UPDATED_DATE")
+    def createdDate: Rep[Timestamp] = column[Timestamp]("CREATED_DATE")
   }
 
   object Queries {

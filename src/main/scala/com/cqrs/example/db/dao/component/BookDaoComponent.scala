@@ -1,7 +1,5 @@
 package com.cqrs.example.db.dao.component
 
-import java.sql.Timestamp
-
 import com.cqrs.example.db.Id
 import com.cqrs.example.db.`type`.Language
 import com.cqrs.example.db.dao.BaseDAO
@@ -31,8 +29,6 @@ trait BookDaoComponent {
       def categoryId: Rep[Id[Category]] = column[Id[Category]]("CATEGORY_ID")
       def language: Rep[Language]       = column[Language]("LANGUAGE")
       def description: Rep[String]      = column[String]("DESCRIPTION")
-      def updatedDate: Rep[Timestamp]   = column[Timestamp]("UPDATED_DATE")
-      def createdDate: Rep[Timestamp]   = column[Timestamp]("CREATED_DATE")
 
       def authorFk: ForeignKeyQuery[authorDao.AuthorTable, Author] =
         foreignKey("author_fk", authorId, authorDao.tableQuery)(_.id)
@@ -41,7 +37,15 @@ trait BookDaoComponent {
         foreignKey("category_fk", categoryId, categoryDao.tableQuery)(_.id)
 
       def * : ProvenShape[Book] =
-        (id.?, title, authorId, publisher, language, categoryId, description).mapTo[Book]
+        (id.?,
+         title,
+         authorId,
+         publisher,
+         language,
+         categoryId,
+         description,
+         updatedDate.?,
+         createdDate.?) <> (Book.construct, Book.unapply)
     }
   }
 }

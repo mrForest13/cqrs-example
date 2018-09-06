@@ -1,12 +1,28 @@
 package com.cqrs.example.db.model
 
-import com.cqrs.example.db.{HasId, Id}
+import java.sql.Timestamp
+
+import com.cqrs.example.db.{Entity, Id}
 import com.cqrs.example.http.model.AuthorContent
 
-final case class Author(id: Option[Id[Author]], firstName: String, lastName: String)
-    extends HasId[Author] {
+final case class Author(
+  id: Option[Id[Author]],
+  firstName: String,
+  lastName: String,
+  updatedDate: Option[Timestamp] = None,
+  createdDate: Option[Timestamp] = None)
+    extends Entity[Author] {
 
   def this(content: AuthorContent) {
     this(None, content.firstName, content.lastName)
+  }
+}
+
+object Author {
+
+  type dbRow = (Option[Id[Author]], String, String, Option[Timestamp], Option[Timestamp])
+
+  val construct: dbRow => Author = {
+    case (id, firstName, lastName, _, _) => Author(id, firstName, lastName, None, None)
   }
 }

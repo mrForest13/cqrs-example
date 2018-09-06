@@ -1,6 +1,6 @@
 package com.cqrs.example
 
-import com.cqrs.example.db.HasId
+import com.cqrs.example.db.Entity
 import com.cqrs.example.db.dao.BaseDAO
 import org.scalatest.{FlatSpecLike, Matchers}
 import org.scalatest.concurrent.ScalaFutures
@@ -19,7 +19,7 @@ trait WriteDbTest
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout = Span(10, Seconds), interval = Span(50, Millis))
 
-  implicit class TableInitiator[E <: HasId[E]](dao: BaseDAO[E]) {
+  implicit class TableInitiator[E <: Entity[E]](dao: BaseDAO[E]) {
 
     private val timeout = 10.seconds
 

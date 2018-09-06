@@ -1,7 +1,5 @@
 package com.cqrs.example.db.dao.component
 
-import java.sql.Timestamp
-
 import com.cqrs.example.db.dao.BaseDAO
 import com.cqrs.example.db.model.Category
 import slick.jdbc.JdbcProfile
@@ -25,11 +23,10 @@ trait CategoryDaoComponent {
 
     final class CategoryTable(tag: Tag) extends BaseTable(tag, "CATEGORY") {
 
-      def name: Rep[String]           = column[String]("NAME")
-      def updatedDate: Rep[Timestamp] = column[Timestamp]("UPDATED_DATE")
-      def createdDate: Rep[Timestamp] = column[Timestamp]("CREATED_DATE")
+      def name: Rep[String] = column[String]("NAME")
 
-      def * : ProvenShape[Category] = (id.?, name).mapTo[Category]
+      def * : ProvenShape[Category] =
+        (id.?, name, updatedDate.?, createdDate.?) <> (Category.construct, Category.unapply)
     }
   }
 }
