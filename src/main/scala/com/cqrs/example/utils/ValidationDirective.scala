@@ -3,16 +3,9 @@ package com.cqrs.example.utils
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directive, Directive0, Directives}
+import com.cqrs.example.http.error.ValidationErrors
 import com.wix.accord.Descriptions.Path
 import com.wix.accord._
-import spray.json.RootJsonFormat
-import spray.json.DefaultJsonProtocol._
-
-final case class ValidationErrors(desc: Map[String, String])
-
-object ValidationErrors {
-  implicit val formatter: RootJsonFormat[ValidationErrors] = jsonFormat1(ValidationErrors.apply)
-}
 
 object ValidationDirective extends SprayJsonSupport with Directives {
 

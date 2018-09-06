@@ -1,6 +1,7 @@
 package com.cqrs.example.http.doc
 
 import akka.http.scaladsl.server.Route
+import com.cqrs.example.http.error.ValidationErrors
 import com.cqrs.example.http.model.{AuthorContent, BookContent, CategoryContent}
 import io.swagger.annotations._
 import javax.ws.rs.Path
@@ -22,7 +23,8 @@ trait WriteSideApi {
   @ApiResponses(
     Array(
       new ApiResponse(code = 500, message = "Internal server error"),
-      new ApiResponse(code = 201, message = "The request has been fulfilled ...")
+      new ApiResponse(code = 201, message = "The request has been fulfilled ..."),
+      new ApiResponse(code = 422, message = "Validation desc", response = classOf[ValidationErrors])
     ))
   def addAuthor: Route
 
@@ -40,7 +42,8 @@ trait WriteSideApi {
     Array(
       new ApiResponse(code = 500, message = "Internal server error"),
       new ApiResponse(code = 201, message = "The request has been fulfilled ..."),
-      new ApiResponse(code = 409, message = "Category already exist")
+      new ApiResponse(code = 409, message = "Category already exist"),
+      new ApiResponse(code = 422, message = "Validation desc", response = classOf[ValidationErrors])
     ))
   def addCategory: Route
 
@@ -63,7 +66,8 @@ trait WriteSideApi {
     Array(
       new ApiResponse(code = 500, message = "Internal server error"),
       new ApiResponse(code = 201, message = "The request has been fulfilled ..."),
-      new ApiResponse(code = 404, message = "Author or Category does not exist")
+      new ApiResponse(code = 404, message = "Author or Category does not exist"),
+      new ApiResponse(code = 422, message = "Validation desc", response = classOf[ValidationErrors])
     ))
   def addBook: Route
 }
