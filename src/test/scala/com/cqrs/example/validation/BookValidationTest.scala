@@ -1,8 +1,6 @@
 package com.cqrs.example.validation
 
-import com.cqrs.example.db.Id
-import com.cqrs.example.db.`type`.Language
-import com.cqrs.example.http.model.BookContent
+import com.cqrs.example.ExampleObject
 import com.wix.accord.Descriptions.{Generic, Path}
 import com.wix.accord.scalatest.ResultMatchers
 import org.scalatest.{FlatSpec, Matchers}
@@ -14,11 +12,7 @@ class BookValidationTest extends FlatSpec with Matchers with ResultMatchers {
 
   private val rand = new Random()
 
-  private val book = new BookContent(rand.nextString(10),
-                                     rand.nextString(10),
-                                     Language.fromCode("PL").get,
-                                     Id(1),
-                                     rand.nextString(100))
+  private val book = ExampleObject.bookContent
 
   private val incorrectTitleLow       = rand.nextString(2)
   private val incorrectTitleMax       = rand.nextString(21)
@@ -26,6 +20,7 @@ class BookValidationTest extends FlatSpec with Matchers with ResultMatchers {
   private val incorrectPublisherMax   = rand.nextString(21)
   private val incorrectDescriptionLow = rand.nextString(4)
   private val incorrectDescriptionMax = rand.nextString(501)
+  private val incorrectPrice          = 0.0
 
   "Book content event validator" should "return empty error list" in {
     validate(book) shouldBe Success
@@ -87,6 +82,16 @@ class BookValidationTest extends FlatSpec with Matchers with ResultMatchers {
         value = incorrectDescriptionMax,
         path = Path(Generic("description")),
         constraint = s"got ${incorrectDescriptionMax.length}, expected between 5 and 500"
+      )
+    )
+  }
+
+  it should "return error message for price equal or less than 0" in {
+    validate(book.copy(price = incorrectPrice)) should failWith(
+      RuleViolationMatcher(
+        value = incorrectPrice,
+        path = Path(Generic("price")),
+        constraint = s"got $incorrectPrice, expected more than 0.0"
       )
     )
   }

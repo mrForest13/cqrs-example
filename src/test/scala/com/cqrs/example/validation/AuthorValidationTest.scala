@@ -1,6 +1,6 @@
 package com.cqrs.example.validation
 
-import com.cqrs.example.http.model.AuthorContent
+import com.cqrs.example.ExampleObject
 import com.wix.accord.Descriptions.{Generic, Path}
 import com.wix.accord.scalatest.ResultMatchers
 import org.scalatest.{FlatSpec, Matchers}
@@ -12,7 +12,7 @@ class AuthorValidationTest extends FlatSpec with Matchers with ResultMatchers {
 
   private val rand = new Random()
 
-  private val author = new AuthorContent(rand.nextString(10), rand.nextString(10))
+  private val author = ExampleObject.authorContent
 
   private val incorrectFirstNameLow = rand.nextString(2)
   private val incorrectFirstNameMax = rand.nextString(21)

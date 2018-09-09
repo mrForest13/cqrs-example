@@ -3,7 +3,7 @@ package com.cqrs.example.service
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.testkit.{ImplicitSender, TestKit}
-import com.cqrs.example.WriteDbTest
+import com.cqrs.example.{ExampleObject, WriteDbTest}
 import com.cqrs.example.db.Id
 import com.cqrs.example.db.model.Category
 import com.cqrs.example.service.write.{CategoryWriteService, CategoryWriteServiceComponent}
@@ -40,7 +40,7 @@ class CategoryWriteServiceText
 
   "Category write service" should "return same element after insert new element" in {
 
-    val category = Category(None, "Horror")
+    val category = new Category(ExampleObject.categoryContent)
 
     val action = for {
       _    <- categoryWriteService.add(category)
@@ -54,7 +54,7 @@ class CategoryWriteServiceText
 
   it should "throw exception after insert existing element" in {
 
-    val category = Category(None, "Horror")
+    val category = new Category(ExampleObject.categoryContent)
 
     val action = for {
       _      <- categoryWriteService.add(category)

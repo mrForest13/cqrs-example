@@ -3,7 +3,7 @@ package com.cqrs.example.service
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.testkit.{ImplicitSender, TestKit}
-import com.cqrs.example.WriteDbTest
+import com.cqrs.example.{ExampleObject, WriteDbTest}
 import com.cqrs.example.db.Id
 import com.cqrs.example.db.model.Author
 import com.cqrs.example.service.write.{AuthorWriteService, AuthorWriteServiceComponent}
@@ -39,7 +39,7 @@ class AuthorWriteServiceTest
 
   "Author write service" should "return same element after insert new element" in {
 
-    val author = Author(None, "Jan", "Nowak")
+    val author = new Author(ExampleObject.authorContent)
 
     val action = for {
       _    <- authorWriteService.add(author)

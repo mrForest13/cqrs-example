@@ -5,7 +5,6 @@ import akka.stream.ActorMaterializer
 import akka.testkit.{ImplicitSender, TestKit}
 import com.cqrs.example._
 import com.cqrs.example.db.Id
-import com.cqrs.example.db.`type`.Language
 import com.cqrs.example.db.model.{Author, Book, Category}
 import com.cqrs.example.es.{BookDocument, ElasticsearchContext}
 import com.cqrs.example.handler.EventHandlerComponent
@@ -63,15 +62,13 @@ class BookWriteServiceTest
     db.close()
   }
 
-  val pl: Language = Language.fromCode("PL").get
-
   "Book write service" should "return same element after insert new element" in {
 
-    val author   = Author(None, "Jan", "Nowak")
-    val category = Category(None, "Horror")
-    val book     = Book(None, "Example", Id(1), "publisher", pl, Id(1), "description")
+    val author   = new Author(ExampleObject.authorContent)
+    val category = new Category(ExampleObject.categoryContent)
+    val book     = new Book(Id(1), ExampleObject.bookContent)
 
-    val bookDoc = new BookDocument(book, author, category)
+    val bookDoc = new BookDocument(book.copy(id = Some(Id(1))), author, category)
 
     bookReadService.insert _ expects bookDoc returning Future(EsHelper.emptyIndexRes)
 
@@ -89,7 +86,7 @@ class BookWriteServiceTest
 
   it should "throw exception after insert if author does not exist" in {
 
-    val book = Book(None, "Example", Id(1), "publisher", pl, Id(1), "description")
+    val book = new Book(Id(1), ExampleObject.bookContent)
 
     val action = for {
       result <- bookWriteService.add(book)
@@ -102,8 +99,8 @@ class BookWriteServiceTest
 
   it should "throw exception after insert if category does not exist" in {
 
-    val author = Author(None, "Jan", "Nowak")
-    val book   = Book(None, "Example", Id(1), "publisher", pl, Id(1), "description")
+    val author = new Author(ExampleObject.authorContent)
+    val book   = new Book(Id(1), ExampleObject.bookContent)
 
     val action = for {
       _      <- authorWriteService.add(author)

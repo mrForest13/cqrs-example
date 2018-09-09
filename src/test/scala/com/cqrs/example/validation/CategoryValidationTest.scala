@@ -1,6 +1,6 @@
 package com.cqrs.example.validation
 
-import com.cqrs.example.http.model.CategoryContent
+import com.cqrs.example.ExampleObject
 import com.wix.accord.Descriptions.{Generic, Path}
 import com.wix.accord.scalatest.ResultMatchers
 import org.scalatest.{FlatSpec, Matchers}
@@ -12,7 +12,7 @@ class CategoryValidationTest extends FlatSpec with Matchers with ResultMatchers 
 
   private val rand = new Random()
 
-  private val category = new CategoryContent(rand.nextString(10))
+  private val category = ExampleObject.categoryContent
 
   private val incorrectNameLow = rand.nextString(2)
   private val incorrectNameMax = rand.nextString(16)
