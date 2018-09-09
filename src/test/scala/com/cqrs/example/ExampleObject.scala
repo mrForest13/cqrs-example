@@ -18,7 +18,6 @@ object ExampleObject {
       publisher = "example publisher",
       language = pl,
       categoryId = Id(1),
-      price = 10,
       description = "example description"
     )
 }

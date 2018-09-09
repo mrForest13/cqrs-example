@@ -20,7 +20,6 @@ class BookValidationTest extends FlatSpec with Matchers with ResultMatchers {
   private val incorrectPublisherMax   = rand.nextString(21)
   private val incorrectDescriptionLow = rand.nextString(4)
   private val incorrectDescriptionMax = rand.nextString(501)
-  private val incorrectPrice          = 0.0
 
   "Book content event validator" should "return empty error list" in {
     validate(book) shouldBe Success
@@ -82,16 +81,6 @@ class BookValidationTest extends FlatSpec with Matchers with ResultMatchers {
         value = incorrectDescriptionMax,
         path = Path(Generic("description")),
         constraint = s"got ${incorrectDescriptionMax.length}, expected between 5 and 500"
-      )
-    )
-  }
-
-  it should "return error message for price equal or less than 0" in {
-    validate(book.copy(price = incorrectPrice)) should failWith(
-      RuleViolationMatcher(
-        value = incorrectPrice,
-        path = Path(Generic("price")),
-        constraint = s"got $incorrectPrice, expected more than 0.0"
       )
     )
   }
