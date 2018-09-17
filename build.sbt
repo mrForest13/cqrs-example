@@ -1,8 +1,7 @@
 import sbt.Keys.scalacOptions
 
-val nameSettings = Seq(
+val commonSettings = Seq(
   organization := "com.example",
-  name := "cqrs-example",
   version := "latest",
   scalaVersion := Version.scala
 )
@@ -55,11 +54,48 @@ val options = Seq(
   "-Ywarn-value-discard"
 )
 
-val `cqrs-example` = (project in file("."))
+lazy val root = (project in file("."))
   .enablePlugins(DockerPlugin)
   .enablePlugins(DockerComposePlugin)
   .settings(
-    nameSettings,
+    name := "cqrs",
+    commonSettings,
+  )
+  .aggregate(
+    `cqrs-read`,
+    `cqrs-write`
+  )
+
+val `cqrs-common` = project
+  .settings(
+    name := "common",
+    commonSettings,
+    scalacOptions ++= options,
+    libraryDependencies ++= Dependencies.all
+  )
+
+val `cqrs-read` = project
+  .dependsOn(`cqrs-common`)
+  .enablePlugins(DockerPlugin)
+  .enablePlugins(DockerComposePlugin)
+  .settings(
+    name := "read",
+    commonSettings,
+    assemblySettings,
+    dockerSettings,
+    scalacOptions ++= options,
+    libraryDependencies ++= Dependencies.all,
+
+    parallelExecution in Test := false,
+  )
+
+val `cqrs-write` = project
+  .dependsOn(`cqrs-common`)
+  .enablePlugins(DockerPlugin)
+  .enablePlugins(DockerComposePlugin)
+  .settings(
+    name := "write",
+    commonSettings,
     assemblySettings,
     dockerSettings,
     scalacOptions ++= options,
