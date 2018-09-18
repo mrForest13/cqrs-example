@@ -1,21 +1,21 @@
-package com.cqrs.example
+package com.cqrs.read
 
-import com.cqrs.write.{Core, WriteDatabaseLayer}
 import com.cqrs.write.db.Entity
 import com.cqrs.write.db.dao.BaseDAO
-import org.scalatest.{FlatSpecLike, Matchers}
+import com.cqrs.write.{Core, DatabaseLayer}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatest.{FlatSpecLike, Matchers}
 
-import scala.concurrent.duration._
 import scala.concurrent.Await
+import scala.concurrent.duration._
 
-trait WriteDbTest
+trait DatabaseTest
     extends FlatSpecLike
     with ScalaFutures
     with Matchers
     with Core
-    with WriteDatabaseLayer {
+    with DatabaseLayer {
 
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout = Span(10, Seconds), interval = Span(50, Millis))

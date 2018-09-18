@@ -16,19 +16,34 @@ services:
     ports:
       - 3308:3306
 
-  cqrs.service:
-    image: com.example/cqrs-example:latest
+  cqrs.read.service:
+    image: com.example/cqrs-read:latest
     depends_on:
-      - cqrs.mysql
       - cqrs.elasticsearch
     ports:
-      - ${APP_PORT}:${APP_PORT}
+      - ${APP_READ_PORT}:${APP_READ_PORT}
     environment:
-      - APP_HOST=${APP_HOST}
-      - APP_PORT=${APP_PORT}
+      - APP_READ_HOST=${APP_READ_HOST}
+      - APP_READ_PORT=${APP_READ_PORT}
+      - CLUSTER_READ_APP_PORT=${CLUSTER_READ_APP_PORT}
+      - CLUSTER_SEED_WRITE_ADDRESS=${CLUSTER_SEED_WRITE_ADDRESS}
+      - CLUSTER_SEED_READ_ADDRESS=${CLUSTER_SEED_READ_ADDRESS}
       - ELASTIC_PROTOCOL=${ELASTIC_PROTOCOL}
       - ELASTIC_HOST=${ELASTIC_HOST}
       - ELASTIC_PORT=${ELASTIC_PORT}
+
+  cqrs.write.service:
+    image: com.example/cqrs-write:latest
+    depends_on:
+      - cqrs.mysql
+    ports:
+      - ${APP_WRITE_PORT}:${APP_WRITE_PORT}
+    environment:
+      - APP_WRITE_HOST=${APP_WRITE_HOST}
+      - APP_WRITE_PORT=${APP_WRITE_PORT}
+      - CLUSTER_WRITE_APP_PORT=${CLUSTER_WRITE_APP_PORT}
+      - CLUSTER_SEED_WRITE_ADDRESS=${CLUSTER_SEED_WRITE_ADDRESS}
+      - CLUSTER_SEED_READ_ADDRESS=${CLUSTER_SEED_READ_ADDRESS}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}

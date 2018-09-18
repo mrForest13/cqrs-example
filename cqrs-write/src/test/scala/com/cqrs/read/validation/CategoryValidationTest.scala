@@ -1,6 +1,6 @@
 package com.cqrs.example.validation
 
-import com.cqrs.example.ExampleObject
+import com.cqrs.read.ExampleObject
 import com.wix.accord.Descriptions.{Generic, Path}
 import com.wix.accord.scalatest.ResultMatchers
 import org.scalatest.{FlatSpec, Matchers}

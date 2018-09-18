@@ -9,6 +9,7 @@ object AppConfig {
 final case class Config(
   app: AppConfig,
   http: HttpConfig,
+  cluster: ClusterConfig
 )
 
 final case class AppConfig(
@@ -19,4 +20,14 @@ final case class AppConfig(
 final case class HttpConfig(
   host: String,
   port: Int
+)
+
+final case class ClusterConfig(
+  eventHandlerRouterName: String,
+  seeds: SeedsConfig,
+)
+
+final case class SeedsConfig(
+  cqrsWrite: String,
+  cqrsRead: String
 )

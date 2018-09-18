@@ -3,7 +3,7 @@ package com.cqrs.read.handler
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.event.LoggingReceive
 import akka.pattern.pipe
-import com.cqrs.common.event.InsertBookToReadDb
+import com.cqrs.common.event.AddNewBook
 import com.cqrs.read.db.BookDocument
 import com.cqrs.read.service.BookReadServiceComponent
 
@@ -28,7 +28,7 @@ trait EventHandlerComponent {
     }
 
     def receive: Receive = LoggingReceive {
-      case event: InsertBookToReadDb =>
+      case event: AddNewBook =>
         bookReadService.insert(new BookDocument(event)) pipeTo sender; ()
     }
   }

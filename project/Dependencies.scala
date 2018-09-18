@@ -16,7 +16,7 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-http-spray-json" % Version.akkaHttp
   )
 
-  val db = Seq(
+  val mysql = Seq(
     "mysql"              % "mysql-connector-java" % Version.mysql,
     "com.typesafe.slick" %% "slick"               % Version.slick,
     "com.typesafe.slick" %% "slick-hikaricp"      % Version.slick
@@ -33,21 +33,29 @@ object Dependencies {
     "ch.qos.logback"             % "logback-classic" % Version.logback
   )
 
+  val wix = Seq(
+    "com.wix" %% "accord-core" % Version.wix
+  )
+
   val other = Seq(
     "com.github.swagger-akka-http" %% "swagger-akka-http" % Version.swagger,
     "ch.megard"                    %% "akka-http-cors"    % Version.cors,
-    "com.wix"                      %% "accord-core"       % Version.wix
   )
 
   val test = Seq(
-    "org.scalatest"     %% "scalatest"        % Version.scalaTest % Test,
-    "org.scalamock"     %% "scalamock"        % Version.scalaMock % Test,
-    "com.typesafe.akka" %% "akka-testkit"     % Version.akka      % Test,
-    "com.wix"           %% "accord-scalatest" % Version.wix       % Test,
-    "com.h2database"    % "h2"                % Version.h2        % Test
+    "org.scalatest"     %% "scalatest"         % Version.scalaTest % Test,
+    "org.scalamock"     %% "scalamock"         % Version.scalaMock % Test,
+    "com.typesafe.akka" %% "akka-testkit"      % Version.akka      % Test,
+    "com.typesafe.akka" %% "akka-http-testkit" % Version.akkaHttp  % Test,
+    "com.wix"           %% "accord-scalatest"  % Version.wix       % Test,
+    "com.h2database"    % "h2"                 % Version.h2        % Test
   )
 
-  lazy val all: Seq[ModuleID] = config ++ akka ++ db ++ elastic4s ++ logging ++ other ++ test
+  lazy val common: Seq[ModuleID] = akka ++ logging ++ wix ++ test
+
+  lazy val read: Seq[ModuleID] = config ++ akka ++ elastic4s ++ logging ++ wix ++ other ++ test
+
+  lazy val write: Seq[ModuleID] = config ++ akka ++ mysql ++ logging ++ wix ++ other ++ test
 }
 
 object Version {

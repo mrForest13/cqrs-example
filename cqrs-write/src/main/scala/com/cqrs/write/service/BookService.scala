@@ -5,8 +5,8 @@ import akka.util.Timeout
 import com.cqrs.common.error.NotFoundException
 import com.cqrs.write.db.model.Book
 import com.cqrs.write.handler.EventHandlerComponent
-import com.cqrs.write.{Core, WriteDatabaseLayer}
-import com.sksamuel.elastic4s.http.index.IndexResponse
+import com.cqrs.write.utils.EventFactory._
+import com.cqrs.write.{Core, DatabaseLayer}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -17,7 +17,7 @@ trait BookService {
 
 trait BookServiceComponent {
 
-  this: WriteDatabaseLayer with EventHandlerComponent with Core =>
+  this: DatabaseLayer with EventHandlerComponent with Core =>
 
   val bookService: BookService
 
@@ -37,12 +37,10 @@ trait BookServiceComponent {
           _.getOrElse(throw NotFoundException(s"Category does not exist"))
         }
         _ <- bookDao.insert(book)
-      } yield new BookDocument(book, author, category)
-
-      for {
-        bookDoc <- db.run(action.transactionally)
-        _       <- (eventHandler ? InsertBookToReadDb(bookDoc)).mapTo[IndexResponse]
+        _ <- DBIO.from(eventHandler ? addNewBook(book, author, category))
       } yield ()
+
+      db.run(action.transactionally)
     }
   }
 }

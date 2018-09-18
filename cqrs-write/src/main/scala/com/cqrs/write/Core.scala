@@ -2,6 +2,7 @@ package com.cqrs.write
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.server.{Route, RouteConcatenation}
+import akka.routing.FromConfig
 import akka.stream.ActorMaterializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
 import com.cqrs.write.config.{AppConfig, Config}
@@ -41,7 +42,7 @@ trait BootedCore extends Core with StrictLogging {
   }
 }
 
-trait WriteDatabaseLayer
+trait DatabaseLayer
     extends HasJdbcProfile
     with DatabaseContext
     with AuthorDaoComponent
@@ -68,15 +69,17 @@ trait EventHandlerLayer extends EventHandlerComponent {
 
   this: Core =>
 
-  val eventHandler: ActorRef = system.actorOf(EventHandler.apply, EventHandler.name)
+  private val routeName: String = config.cluster.eventHandlerRouterName
+
+  val eventHandler: ActorRef = system.actorOf(FromConfig.props(), routeName)
 }
 
-trait WriteServiceLayer
+trait ServiceLayer
     extends AuthorServiceComponent
     with CategoryServiceComponent
     with BookServiceComponent {
 
-  this: WriteDatabaseLayer with EventHandlerLayer with Core =>
+  this: DatabaseLayer with EventHandlerLayer with Core =>
 
   val authorService: AuthorService     = new AuthorServiceImpl
   val categoryService: CategoryService = new CategoryServiceImpl
@@ -85,7 +88,7 @@ trait WriteServiceLayer
 
 trait CommandHandlerLayer extends CommandHandlerComponent {
 
-  this: WriteServiceLayer with Core =>
+  this: ServiceLayer with Core =>
 
   val commandHandler: ActorRef = system.actorOf(CommandHandler.apply, CommandHandler.name)
 }

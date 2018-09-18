@@ -9,9 +9,9 @@ object AppLauncher
     extends App
     with Core
     with BootedCore
-    with WriteDatabaseLayer
+    with DatabaseLayer
     with EventHandlerLayer
-    with WriteServiceLayer
+    with ServiceLayer
     with CommandHandlerLayer
     with RestApiLayer {
 

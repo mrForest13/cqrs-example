@@ -1,12 +1,12 @@
-package com.cqrs.write.service
+package com.cqrs.read.service
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.testkit.{ImplicitSender, TestKit}
-import com.cqrs.example.{ExampleObject, WriteDbTest}
+import com.cqrs.read.{ExampleObject, DatabaseTest}
 import com.cqrs.write.db.Id
 import com.cqrs.write.db.model.Author
-import com.cqrs.write.service.write.AuthorWriteServiceComponent
+import com.cqrs.write.service.{AuthorService, AuthorServiceComponent}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 import scala.concurrent.ExecutionContextExecutor
@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContextExecutor
 class AuthorWriteServiceTest
     extends TestKit(ActorSystem("cqrs-system-test"))
     with ImplicitSender
-    with WriteDbTest
+    with DatabaseTest
     with AuthorServiceComponent
     with BeforeAndAfterEach
     with BeforeAndAfterAll {

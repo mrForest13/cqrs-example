@@ -1,4 +1,4 @@
-package com.cqrs.common.model
+package com.cqrs.common.validation
 
 import spray.json.DefaultJsonProtocol.{jsonFormat1, _}
 import spray.json.RootJsonFormat

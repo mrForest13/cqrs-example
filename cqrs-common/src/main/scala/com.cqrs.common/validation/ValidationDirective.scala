@@ -3,7 +3,6 @@ package com.cqrs.common.validation
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directive, Directive0, Directives}
-import com.cqrs.common.model.ValidationErrors
 import com.wix.accord.Descriptions.Path
 import com.wix.accord._
 

@@ -7,7 +7,6 @@ val commonSettings = Seq(
 )
 
 lazy val dockerSettings = Seq(
-  dockerImageCreationTask := docker.value,
   dockerfile in docker := {
     val artifact: File     = assembly.value
     val artifactTargetPath = s"/app/${artifact.name}"
@@ -19,23 +18,22 @@ lazy val dockerSettings = Seq(
     }
   },
   imageNames in docker := Seq(
-    ImageName(s"${organization.value}/${name.value}:latest"),
     ImageName(
       namespace = Some(organization.value),
       repository = name.value,
       tag = Some(version.value)
     )
-  ),
-  buildOptions in docker := BuildOptions(
-    cache = false,
-    removeIntermediateContainers = BuildOptions.Remove.Always,
-    pullBaseImage = BuildOptions.Pull.Always
-  ),
+  )
 )
 
-lazy val assemblySettings = Seq(
-  mainClass in assembly := Some("com.cqrs.example.AppLauncher"),
-  assemblyJarName in assembly := "cqrs-example.jar",
+lazy val assemblyReadSideSettings = Seq(
+  mainClass in assembly := Some("com.cqrs.read.AppLauncher"),
+  assemblyJarName in assembly := "cqrs-read.jar",
+)
+
+lazy val assemblyWriteSideSettings = Seq(
+  mainClass in assembly := Some("com.cqrs.wrie.AppLauncher"),
+  assemblyJarName in assembly := "cqrs-write.jar",
 )
 
 val options = Seq(
@@ -55,51 +53,51 @@ val options = Seq(
 )
 
 lazy val root = (project in file("."))
-  .enablePlugins(DockerPlugin)
-  .enablePlugins(DockerComposePlugin)
   .settings(
     name := "cqrs",
-    commonSettings,
+    commonSettings
   )
-  .aggregate(
-    `cqrs-read`,
-    `cqrs-write`
-  )
+  .aggregate(`cqrs-read`, `cqrs-write`)
 
 val `cqrs-common` = project
   .settings(
     name := "common",
     commonSettings,
     scalacOptions ++= options,
-    libraryDependencies ++= Dependencies.all
+    libraryDependencies ++= Dependencies.common
+  )
+
+val `cqrs-event` = project
+  .settings(
+    name := "event",
+    commonSettings,
+    scalacOptions ++= options
   )
 
 val `cqrs-read` = project
   .dependsOn(`cqrs-common`)
+  .dependsOn(`cqrs-event`)
   .enablePlugins(DockerPlugin)
-  .enablePlugins(DockerComposePlugin)
   .settings(
     name := "read",
     commonSettings,
-    assemblySettings,
+    assemblyReadSideSettings,
     dockerSettings,
     scalacOptions ++= options,
-    libraryDependencies ++= Dependencies.all,
-
+    libraryDependencies ++= Dependencies.read,
     parallelExecution in Test := false,
   )
 
 val `cqrs-write` = project
   .dependsOn(`cqrs-common`)
+  .dependsOn(`cqrs-event`)
   .enablePlugins(DockerPlugin)
-  .enablePlugins(DockerComposePlugin)
   .settings(
     name := "write",
     commonSettings,
-    assemblySettings,
+    assemblyWriteSideSettings,
     dockerSettings,
     scalacOptions ++= options,
-    libraryDependencies ++= Dependencies.all,
-
+    libraryDependencies ++= Dependencies.write,
     parallelExecution in Test := false,
   )

@@ -1,6 +1,6 @@
 package com.cqrs.read.db
 
-import com.cqrs.common.event.InsertBookToReadDb
+import com.cqrs.common.event.AddNewBook
 import io.swagger.annotations.ApiModel
 import spray.json._
 import spray.json.DefaultJsonProtocol._
@@ -14,7 +14,7 @@ final case class BookDocument(
   category: String,
   description: String) {
 
-  def this(event: InsertBookToReadDb) {
+  def this(event: AddNewBook) {
     this(
       event.title,
       event.author,

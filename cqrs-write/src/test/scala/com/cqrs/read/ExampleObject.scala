@@ -1,4 +1,4 @@
-package com.cqrs.example
+package com.cqrs.read
 
 import com.cqrs.write.db.Id
 import com.cqrs.write.db.`type`.Language

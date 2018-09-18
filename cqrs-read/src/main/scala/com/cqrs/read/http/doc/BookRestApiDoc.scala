@@ -1,7 +1,7 @@
 package com.cqrs.read.http.doc
 
 import akka.http.scaladsl.server.Route
-import com.cqrs.common.model.ValidationErrors
+import com.cqrs.common.validation.ValidationErrors
 import com.cqrs.read.db.BookDocument
 import io.swagger.annotations._
 import javax.ws.rs.Path

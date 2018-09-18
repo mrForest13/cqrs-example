@@ -6,12 +6,12 @@ import com.cqrs.write.db.model.{Author, Book, Category}
 import com.cqrs.write.handler.model.{AddAuthorCommand, AddBookCommand, AddCategoryCommand}
 import com.cqrs.write.db.Id
 import akka.pattern.pipe
-import com.cqrs.write.WriteServiceLayer
+import com.cqrs.write.ServiceLayer
 import com.cqrs.write.http.model.{AuthorContent, BookContent, CategoryContent}
 
 trait CommandHandlerComponent {
 
-  this: WriteServiceLayer =>
+  this: ServiceLayer =>
 
   final class CommandHandler extends Actor with ActorLogging {
 
