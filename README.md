@@ -67,6 +67,6 @@ This publish image to local repository.
 | CONTAINER ID |              IMAGE           |       STATUS      |          PORTS         |                 NAMES             |
 | ------------ | ---------------------------- | ----------------- | ---------------------- | --------------------------------- |
 | 963dc10d6093 | com.example/cqrs-read:0.1.0  | Up About a minute | 0.0.0.0:8160->8160/tcp | cqrs-example_cqrs.read.service_1  |
-| 963dc10d6093 | com.example/cqrs-write:0.1.0 | Up About a minute | 0.0.0.0:8160->8170/tcp | cqrs-example_cqrs.write.service_1 |
+| 963dc10d6093 | com.example/cqrs-write:0.1.0 | Up About a minute | 0.0.0.0:8170->8170/tcp | cqrs-example_cqrs.write.service_1 |
 | 60202fa008bf | elasticsearch:latest         | Up About a minute | 0.0.0.0:9200->9200/tcp | cqrs-example_cqrs.mysql_1         |
 | 60202fa008bf | mysql:5.7.22                 | Up About a minute | 0.0.0.0:3308->3306/tcp | cqrs-example_cqrs.elasticsearch_1 |
