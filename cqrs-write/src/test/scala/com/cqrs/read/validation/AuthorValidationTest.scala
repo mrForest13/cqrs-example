@@ -1,4 +1,4 @@
-package com.cqrs.example.validation
+package com.cqrs.read.validation
 
 import com.cqrs.read.ExampleObject
 import com.wix.accord.Descriptions.{Generic, Path}

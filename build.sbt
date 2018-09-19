@@ -1,6 +1,6 @@
 import sbt.Keys.scalacOptions
 
-val commonSettings = Seq(
+lazy val commonSettings = Seq(
   organization := "com.example",
   version := "latest",
   scalaVersion := Version.scala
@@ -36,7 +36,7 @@ lazy val assemblyWriteSideSettings = Seq(
   assemblyJarName in assembly := "cqrs-write.jar",
 )
 
-val options = Seq(
+lazy val options = Seq(
   "-deprecation",
   "-encoding",
   "UTF-8",
@@ -55,11 +55,12 @@ val options = Seq(
 lazy val root = (project in file("."))
   .settings(
     name := "cqrs",
-    commonSettings
+    commonSettings,
+    addCommandAlias(name = "docker", value = ";cqrs-read/docker;cqrs-write/docker")
   )
   .aggregate(`cqrs-read`, `cqrs-write`)
 
-val `cqrs-common` = project
+lazy val `cqrs-common` = project
   .settings(
     name := "common",
     commonSettings,
@@ -67,14 +68,14 @@ val `cqrs-common` = project
     libraryDependencies ++= Dependencies.common
   )
 
-val `cqrs-event` = project
+lazy val `cqrs-event` = project
   .settings(
     name := "event",
     commonSettings,
     scalacOptions ++= options
   )
 
-val `cqrs-read` = project
+lazy val `cqrs-read` = project
   .dependsOn(`cqrs-common`)
   .dependsOn(`cqrs-event`)
   .enablePlugins(DockerPlugin)
@@ -88,7 +89,7 @@ val `cqrs-read` = project
     parallelExecution in Test := false,
   )
 
-val `cqrs-write` = project
+lazy val `cqrs-write` = project
   .dependsOn(`cqrs-common`)
   .dependsOn(`cqrs-event`)
   .enablePlugins(DockerPlugin)

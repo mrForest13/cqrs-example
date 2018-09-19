@@ -4,7 +4,8 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.testkit.{ImplicitSender, TestKit}
 import com.cqrs.common.error.ConflictException
-import com.cqrs.read.{ExampleObject, DatabaseTest}
+import com.cqrs.read.{DatabaseTest, ExampleObject}
+import com.cqrs.write.Core
 import com.cqrs.write.db.Id
 import com.cqrs.write.db.model.Category
 import com.cqrs.write.service.{CategoryService, CategoryServiceComponent}
@@ -15,13 +16,14 @@ import scala.concurrent.ExecutionContextExecutor
 class CategoryWriteServiceText
     extends TestKit(ActorSystem("cqrs-system-test"))
     with ImplicitSender
+    with Core
     with DatabaseTest
     with CategoryServiceComponent
     with BeforeAndAfterEach
     with BeforeAndAfterAll {
 
-  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit lazy val materializer: ActorMaterializer       = ActorMaterializer()
+  implicit lazy val executionContext: ExecutionContextExecutor = system.dispatcher
+  implicit lazy val materializer: ActorMaterializer            = ActorMaterializer()
 
   val categoryService: CategoryService = new CategoryServiceImpl
 

@@ -14,8 +14,9 @@ trait DatabaseTest
     extends FlatSpecLike
     with ScalaFutures
     with Matchers
-    with Core
     with DatabaseLayer {
+
+  this: Core =>
 
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout = Span(10, Seconds), interval = Span(50, Millis))
