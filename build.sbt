@@ -2,7 +2,7 @@ import sbt.Keys.scalacOptions
 
 lazy val commonSettings = Seq(
   organization := "com.example",
-  version := "latest",
+  version := "0.1.0",
   scalaVersion := Version.scala
 )
 
@@ -32,7 +32,7 @@ lazy val assemblyReadSideSettings = Seq(
 )
 
 lazy val assemblyWriteSideSettings = Seq(
-  mainClass in assembly := Some("com.cqrs.wrie.AppLauncher"),
+  mainClass in assembly := Some("com.cqrs.write.AppLauncher"),
   assemblyJarName in assembly := "cqrs-write.jar",
 )
 
@@ -52,7 +52,7 @@ lazy val options = Seq(
   "-Ywarn-value-discard"
 )
 
-lazy val root = (project in file("."))
+lazy val cqrs = (project in file("."))
   .settings(
     name := "cqrs",
     commonSettings,
@@ -62,7 +62,7 @@ lazy val root = (project in file("."))
 
 lazy val `cqrs-common` = project
   .settings(
-    name := "common",
+    name := "cqrs-common",
     commonSettings,
     scalacOptions ++= options,
     libraryDependencies ++= Dependencies.common
@@ -70,7 +70,7 @@ lazy val `cqrs-common` = project
 
 lazy val `cqrs-event` = project
   .settings(
-    name := "event",
+    name := "cqrs-event",
     commonSettings,
     scalacOptions ++= options
   )
@@ -80,7 +80,7 @@ lazy val `cqrs-read` = project
   .dependsOn(`cqrs-event`)
   .enablePlugins(DockerPlugin)
   .settings(
-    name := "read",
+    name := "cqrs-read",
     commonSettings,
     assemblyReadSideSettings,
     dockerSettings,
@@ -94,7 +94,7 @@ lazy val `cqrs-write` = project
   .dependsOn(`cqrs-event`)
   .enablePlugins(DockerPlugin)
   .settings(
-    name := "write",
+    name := "cqrs-write",
     commonSettings,
     assemblyWriteSideSettings,
     dockerSettings,

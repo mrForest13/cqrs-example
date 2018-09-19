@@ -39,7 +39,7 @@ object Dependencies {
 
   val other = Seq(
     "com.github.swagger-akka-http" %% "swagger-akka-http" % Version.swagger,
-    "ch.megard"                    %% "akka-http-cors"    % Version.cors,
+    "ch.megard"                    %% "akka-http-cors"    % Version.cors
   )
 
   val test = Seq(
@@ -63,7 +63,7 @@ object Version {
   val config       = "1.3.3"
   val pureConfig   = "0.9.2"
   val akka         = "2.5.15"
-  val akkaHttp     = "10.1.4"
+  val akkaHttp     = "10.1.5"
   val playJson     = "2.6.10"
   val akkaJson     = "1.21.0"
   val mysql        = "5.1.46"

@@ -17,7 +17,7 @@ services:
       - 3308:3306
 
   cqrs.read.service:
-    image: com.example/cqrs-read:latest
+    image: com.example/cqrs-read:${VERSION}
     depends_on:
       - cqrs.elasticsearch
     ports:
@@ -33,7 +33,7 @@ services:
       - ELASTIC_PORT=${ELASTIC_PORT}
 
   cqrs.write.service:
-    image: com.example/cqrs-write:latest
+    image: com.example/cqrs-write:${VERSION}
     depends_on:
       - cqrs.mysql
     ports:
