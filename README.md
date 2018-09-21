@@ -14,31 +14,31 @@ You can specify environment variables via .env file (sample file in main directo
 
 * **Application**
 
-    `VERSION`='Version from build.sbt (0.1.0)'
+    `VERSION`= Version from build.sbt (0.1.0)
 
-    `APP_READ_HOST`='Host address for read side application' <br/>
-    `APP_READ_PORT`='TCP port for read side application'
+    `APP_READ_HOST`= Host address for read side application <br/>
+    `APP_READ_PORT`= TCP port for read side application
 
-    `ELASTIC_PROTOCOL`='Http or Https' <br/>
-    `ELASTIC_HOST`='Host address for elasticsearch instance' <br/>
-    `ELASTIC_PORT`='TCP port for elasticsearch instance'
+    `ELASTIC_PROTOCOL`= Http or Https <br/>
+    `ELASTIC_HOST`= Host address for elasticsearch instance <br/>
+    `ELASTIC_PORT`= TCP port for elasticsearch instance
     
-    `DB_USER`='Mysql database username'   
-    `DB_PASSWORD`='Mysql database user password'   
-    `DB_NAME`='Mysql database name'   
-    `DB_URL`='Mysql database address' 
+    `DB_USER`= Mysql database username 
+    `DB_PASSWORD`= Mysql database user password 
+    `DB_NAME`= Mysql database name
+    `DB_URL`= Mysql database address
     
-    `CLUSTER_EVENT_HOST`='Host address for event sourcing module in akka cluster' <br/>
-    `CLUSTER_EVENT_PORT`='TCP port for event sourcing module in akka cluster'
+    `CLUSTER_EVENT_HOST`= Host address for event sourcing module in akka cluster <br/>
+    `CLUSTER_EVENT_PORT`= TCP port for event sourcing module in akka cluster
     
-    `APP_WRITE_HOST`='Host address for write side application' <br/>
-    `APP_WRITE_PORT`='TCP port for write side application'
+    `APP_WRITE_HOST`= Host address for write side application <br/>
+    `APP_WRITE_PORT`= TCP port for write side application
 
-    `CLUSTER_WRITE_HOST`='Host address for write module in akka cluster'     
-    `CLUSTER_WRITE_PORT`='TCP port for write module in akka cluster'
+    `CLUSTER_WRITE_HOST`= Host address for write module in akka cluster    
+    `CLUSTER_WRITE_PORT`= TCP port for write module in akka cluster
     
-    `CLUSTER_SEED_WRITE_ADDRESS`='Full address for write module in akka cluster' <br/>
-    `CLUSTER_SEED_EVENT_ADDRESS`='Full address for event sourcing module in akka cluster'
+    `CLUSTER_SEED_WRITE_ADDRESS`= Full address for write module in akka cluster <br/>
+    `CLUSTER_SEED_EVENT_ADDRESS`= Full address for event sourcing module in akka cluster
           
 ## Running 
 
@@ -67,10 +67,10 @@ This publish image to local repository.
 
 ```docker ps``` 
 
-| CONTAINER ID |              IMAGE           |       STATUS      |          PORTS         |                 NAMES             |
-| ------------ | ---------------------------- | ----------------- | ---------------------- | --------------------------------- |
-| 17d830c1499a | com.example/cqrs-event:0.1.0 | Up About a minute | 0.0.0.0:2552->2552/tcp | cqrs-example_cqrs.event.service_1 |
-| 963dc10d6093 | com.example/cqrs-read:0.1.0  | Up About a minute | 0.0.0.0:8160->8160/tcp | cqrs-example_cqrs.read.service_1  |
-| 963dc10d6093 | com.example/cqrs-write:0.1.0 | Up About a minute | 0.0.0.0:8170->8170/tcp | cqrs-example_cqrs.write.service_1 |
-| 60202fa008bf | elasticsearch:latest         | Up About a minute | 0.0.0.0:9200->9200/tcp | cqrs-example_cqrs.mysql_1         |
-| 60202fa008bf | mysql:5.7.22                 | Up About a minute | 0.0.0.0:3308->3306/tcp | cqrs-example_cqrs.elasticsearch_1 |
+| CONTAINER ID |              IMAGE           |          PORTS         |                 NAMES             |
+| ------------ | ---------------------------- | ---------------------- | --------------------------------- |
+| 17d830c1499a | com.example/cqrs-event:0.1.0 | 0.0.0.0:2552->2552/tcp | cqrs-example_cqrs.event.service_1 |
+| 963dc10d6093 | com.example/cqrs-read:0.1.0  | 0.0.0.0:8160->8160/tcp | cqrs-example_cqrs.read.service_1  |
+| 963dc10d6093 | com.example/cqrs-write:0.1.0 | 0.0.0.0:8170->8170/tcp | cqrs-example_cqrs.write.service_1 |
+| 60202fa008bf | elasticsearch:latest         | 0.0.0.0:9200->9200/tcp | cqrs-example_cqrs.mysql_1         |
+| 60202fa008bf | mysql:5.7.22                 | 0.0.0.0:3308->3306/tcp | cqrs-example_cqrs.elasticsearch_1 |
