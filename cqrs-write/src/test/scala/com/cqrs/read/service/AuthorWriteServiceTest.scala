@@ -10,7 +10,7 @@ import com.cqrs.write.db.model.Author
 import com.cqrs.write.service.{AuthorService, AuthorServiceComponent}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.ExecutionContext
 
 class AuthorWriteServiceTest
     extends TestKit(ActorSystem("cqrs-system-test"))
@@ -21,8 +21,8 @@ class AuthorWriteServiceTest
     with BeforeAndAfterEach
     with BeforeAndAfterAll {
 
-  implicit lazy val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit lazy val materializer: ActorMaterializer            = ActorMaterializer()
+  implicit lazy val executionContext: ExecutionContext = system.dispatcher
+  implicit lazy val materializer: ActorMaterializer    = ActorMaterializer()
 
   val authorService: AuthorService = new AuthorServiceImpl
 
@@ -44,8 +44,8 @@ class AuthorWriteServiceTest
     val author = new Author(ExampleObject.authorContent)
 
     val action = for {
-      _    <- authorService.add(author)
-      find <- db.run(authorDao.findById(Id(1)))
+      id   <- authorService.add(author)
+      find <- db.run(authorDao.findById(id))
     } yield find
 
     whenReady(action) { result =>

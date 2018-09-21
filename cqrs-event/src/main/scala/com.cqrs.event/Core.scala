@@ -1,16 +1,11 @@
-package com.cqrs.read
+package com.cqrs.event
 
 import akka.actor.{ActorRef, ActorSystem}
-import akka.http.scaladsl.server.{Route, RouteConcatenation}
 import akka.stream.ActorMaterializer
-import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
-import com.cqrs.read.service.BookService
-import com.cqrs.read.config.{AppConfig, Config}
-import com.cqrs.read.db.ElasticsearchContext
-import com.cqrs.read.handler._
-import com.cqrs.read.http.error.ExceptionHandlerDirective._
-import com.cqrs.read.http.{BookRestApi, RestApi, SwaggerDocRestApi}
-import com.cqrs.read.service.BookServiceComponent
+import com.cqrs.event.config.{AppConfig, Config}
+import com.cqrs.event.db.ElasticsearchContext
+import com.cqrs.event.handler.EventHandlerComponent
+import com.cqrs.event.service.{BookService, BookServiceComponent}
 import com.sksamuel.elastic4s.http.{ElasticClient, ElasticProperties}
 import com.typesafe.scalalogging.StrictLogging
 
@@ -55,31 +50,10 @@ trait ServiceLayer extends BookServiceComponent {
   val bookService: BookService = new BookServiceImpl
 }
 
-trait QueryHandlerLayer extends QueryHandlerComponent {
+trait EventHandlerLayer extends EventHandlerComponent {
 
   this: ServiceLayer with Core =>
 
-  val queryHandler: ActorRef = system.actorOf(QueryHandler.apply, QueryHandler.name)
+  val eventHandler: ActorRef = system.actorOf(EventHandler.apply, EventHandler.name)
 }
 
-trait RestApiLayer extends RestApi with RouteConcatenation {
-
-  this: QueryHandlerLayer with Core =>
-
-  val host: String = config.http.host
-  val port: Int    = config.http.port
-
-  val swaggerDocRestApi: RestApi = new SwaggerDocRestApi(host, port)
-
-  val bookRestApi: RestApi  = new BookRestApi(queryHandler)
-
-  val routes: Route = cors() {
-    handleExceptions(exceptionHandler) {
-      Seq(
-        bookRestApi,
-        swaggerDocRestApi
-      ).map(_.routes)
-        .reduceLeft(_ ~ _)
-    }
-  }
-}

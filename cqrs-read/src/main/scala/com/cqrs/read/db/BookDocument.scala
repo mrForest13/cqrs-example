@@ -1,6 +1,5 @@
 package com.cqrs.read.db
 
-import com.cqrs.event.AddNewBookEvent
 import io.swagger.annotations.ApiModel
 import spray.json._
 import spray.json.DefaultJsonProtocol._
@@ -13,23 +12,11 @@ final case class BookDocument(
   language: String,
   category: String,
   description: String) {
-
-  def this(event: AddNewBookEvent) {
-    this(
-      event.title,
-      event.author,
-      event.publisher,
-      event.language,
-      event.category,
-      event.description
-    )
-  }
 }
 
 object BookDocument {
 
-  val indexName: String   = "book-store"
-  val mappingName: String = "book"
+  val indexName: String   = "book"
 
   implicit val formatter: RootJsonFormat[BookDocument] = jsonFormat6(BookDocument.apply)
 }

@@ -4,34 +4,23 @@ import com.cqrs.read.Core
 import com.cqrs.read.db.{BookDocument, ElasticsearchContext}
 import com.cqrs.read.http.model.BookSearchParams
 import com.sksamuel.elastic4s.http.ElasticDsl._
-import com.sksamuel.elastic4s.http.index.IndexResponse
 import com.sksamuel.elastic4s.sprayjson._
 import com.typesafe.scalalogging.LazyLogging
 import com.cqrs.read.utils.EsUtils._
 
 import scala.concurrent.Future
 
-trait BookReadService {
-  def insert(book: BookDocument): Future[IndexResponse]
+trait BookService {
   def find(searchParams: BookSearchParams): Future[IndexedSeq[BookDocument]]
 }
 
-trait BookReadServiceComponent {
+trait BookServiceComponent {
 
   this: ElasticsearchContext with Core =>
 
-  val bookReadService: BookReadService
+  val bookService: BookService
 
-  class BookReadServiceImpl extends BookReadService with LazyLogging {
-
-    def insert(book: BookDocument): Future[IndexResponse] = {
-
-      val req = indexInto(BookDocument.indexName, BookDocument.mappingName).doc(book)
-
-      logger.debug(s"Insert request: ${req.show}")
-
-      esClient.execute(req).getResponse
-    }
+  class BookServiceImpl extends BookService with LazyLogging {
 
     def find(searchParams: BookSearchParams): Future[IndexedSeq[BookDocument]] = {
 

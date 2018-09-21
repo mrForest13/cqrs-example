@@ -25,9 +25,11 @@ final case class HttpConfig(
 final case class ClusterConfig(
   eventHandlerRouterName: String,
   seeds: SeedsConfig,
+  host: String,
+  port: Int
 )
 
 final case class SeedsConfig(
   cqrsWrite: String,
-  cqrsRead: String
+  cqrsEvent: String
 )

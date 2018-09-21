@@ -1,4 +1,4 @@
-package com.cqrs.read.config
+package com.cqrs.event.config
 
 import com.sksamuel.elastic4s.http.ElasticNodeEndpoint
 import pureconfig.loadConfigOrThrow
@@ -9,17 +9,12 @@ object AppConfig {
 
 final case class Config(
   app: AppConfig,
-  http: HttpConfig,
   elastic: ElasticConfig,
+  cluster: ClusterConfig
 )
 
 final case class AppConfig(
   actorSystem: String
-)
-
-final case class HttpConfig(
-  host: String,
-  port: Int
 )
 
 final case class ElasticConfig(
@@ -29,3 +24,14 @@ final case class ElasticConfig(
 ) {
   def node: ElasticNodeEndpoint = ElasticNodeEndpoint(protocol, host, port, None)
 }
+
+final case class ClusterConfig(
+  seeds: SeedsConfig,
+  host: String,
+  port: Int
+)
+
+final case class SeedsConfig(
+  cqrsWrite: String,
+  cqrsEvent: String
+)

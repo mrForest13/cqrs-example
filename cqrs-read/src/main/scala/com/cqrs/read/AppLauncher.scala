@@ -11,7 +11,6 @@ object AppLauncher
     with BootedCore
     with DatabaseLayer
     with ServiceLayer
-    with EventHandlerLayer
     with QueryHandlerLayer
     with RestApiLayer {
 

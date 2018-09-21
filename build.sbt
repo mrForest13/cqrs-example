@@ -36,6 +36,11 @@ lazy val assemblyWriteSideSettings = Seq(
   assemblyJarName in assembly := "cqrs-write.jar",
 )
 
+lazy val assemblyEventSourcingSettings = Seq(
+  mainClass in assembly := Some("com.cqrs.event.AppLauncher"),
+  assemblyJarName in assembly := "cqrs-event.jar",
+)
+
 lazy val options = Seq(
   "-deprecation",
   "-encoding",
@@ -56,9 +61,9 @@ lazy val cqrs = (project in file("."))
   .settings(
     name := "cqrs",
     commonSettings,
-    addCommandAlias(name = "docker", value = ";cqrs-read/docker;cqrs-write/docker")
+    addCommandAlias("docker", ";cqrs-read/docker;cqrs-write/docker;cqrs-event/docker")
   )
-  .aggregate(`cqrs-read`, `cqrs-write`)
+  .aggregate(`cqrs-read`, `cqrs-write`, `cqrs-event`)
 
 lazy val `cqrs-common` = project
   .settings(
@@ -69,15 +74,20 @@ lazy val `cqrs-common` = project
   )
 
 lazy val `cqrs-event` = project
+  .dependsOn(`cqrs-common`)
+  .enablePlugins(DockerPlugin)
   .settings(
     name := "cqrs-event",
     commonSettings,
-    scalacOptions ++= options
+    assemblyEventSourcingSettings,
+    dockerSettings,
+    scalacOptions ++= options,
+    libraryDependencies ++= Dependencies.eventSourcing,
+    parallelExecution in Test := false,
   )
 
 lazy val `cqrs-read` = project
   .dependsOn(`cqrs-common`)
-  .dependsOn(`cqrs-event`)
   .enablePlugins(DockerPlugin)
   .settings(
     name := "cqrs-read",
@@ -91,7 +101,6 @@ lazy val `cqrs-read` = project
 
 lazy val `cqrs-write` = project
   .dependsOn(`cqrs-common`)
-  .dependsOn(`cqrs-event`)
   .enablePlugins(DockerPlugin)
   .settings(
     name := "cqrs-write",

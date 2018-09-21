@@ -27,6 +27,8 @@ final case class Book(
          content.categoryId,
          content.description)
   }
+
+  def withId(id: Id[Book]):Book = copy(id = Some(id))
 }
 
 object Book {

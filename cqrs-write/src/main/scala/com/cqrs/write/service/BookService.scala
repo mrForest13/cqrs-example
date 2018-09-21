@@ -3,6 +3,8 @@ package com.cqrs.write.service
 import akka.pattern.ask
 import akka.util.Timeout
 import com.cqrs.common.error.NotFoundException
+import com.cqrs.common.event.EventSuccess
+import com.cqrs.write.db.Id
 import com.cqrs.write.db.model.Book
 import com.cqrs.write.handler.EventHandlerComponent
 import com.cqrs.write.utils.EventFactory._
@@ -12,7 +14,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 
 trait BookService {
-  def add(book: Book): Future[Unit]
+  def add(book: Book): Future[Id[Book]]
 }
 
 trait BookServiceComponent {
@@ -27,7 +29,7 @@ trait BookServiceComponent {
 
     implicit val timeout: Timeout = Timeout(5.second)
 
-    def add(book: Book): Future[Unit] = {
+    def add(book: Book): Future[Id[Book]] = {
 
       val action = for {
         author <- authorDao.findById(book.authorId).map {
@@ -36,9 +38,11 @@ trait BookServiceComponent {
         category <- categoryDao.findById(book.categoryId).map {
           _.getOrElse(throw NotFoundException(s"Category does not exist"))
         }
-        _ <- bookDao.insert(book)
-        _ <- DBIO.from(eventHandler ? addNewBook(book, author, category))
-      } yield ()
+        id <- bookDao.insert(book)
+        _ <- DBIO.from {
+          (eventHandler ? newBookAdded(book.withId(id), author, category)).mapTo[EventSuccess]
+        }
+      } yield id
 
       db.run(action.transactionally)
     }

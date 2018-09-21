@@ -1,15 +1,15 @@
-package com.cqrs.read.handler
+package com.cqrs.event.handler
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.event.LoggingReceive
+import com.cqrs.common.event.NewBookAddedEvent
+import com.cqrs.event.service.BookServiceComponent
 import akka.pattern.pipe
-import com.cqrs.event.AddNewBookEvent
-import com.cqrs.read.db.BookDocument
-import com.cqrs.read.service.BookReadServiceComponent
+import com.cqrs.event.db.model.BookDocument
 
 trait EventHandlerComponent {
 
-  this: BookReadServiceComponent =>
+  this: BookServiceComponent =>
 
   val eventHandler: ActorRef
 
@@ -28,8 +28,11 @@ trait EventHandlerComponent {
     }
 
     def receive: Receive = LoggingReceive {
-      case event: AddNewBookEvent =>
-        bookReadService.insert(new BookDocument(event)) pipeTo sender; ()
+      case event: NewBookAddedEvent => addNewBook(event)
+    }
+
+    private def addNewBook(event: NewBookAddedEvent): Unit = {
+      bookService.insert(event.id, BookDocument(event)) pipeTo sender; ()
     }
   }
 

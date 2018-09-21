@@ -4,11 +4,11 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.event.LoggingReceive
 import com.cqrs.read.handler.model.GetBooks
 import akka.pattern.pipe
-import com.cqrs.read.service.BookReadServiceComponent
+import com.cqrs.read.service.BookServiceComponent
 
 trait QueryHandlerComponent {
 
-  this: BookReadServiceComponent =>
+  this: BookServiceComponent =>
 
   val queryHandler: ActorRef
 
@@ -28,7 +28,7 @@ trait QueryHandlerComponent {
 
     def receive: Receive = LoggingReceive {
       case GetBooks(searchParams) =>
-        bookReadService.find(searchParams) pipeTo sender; ()
+        bookService.find(searchParams) pipeTo sender; ()
     }
   }
 
