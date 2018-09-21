@@ -34,7 +34,7 @@ You can specify environment variables via .env file (sample file in main directo
     `APP_WRITE_HOST`= Host address for write side application <br/>
     `APP_WRITE_PORT`= TCP port for write side application
 
-    `CLUSTER_WRITE_HOST`= Host address for write module in akka cluster <br/>    
+    `CLUSTER_WRITE_HOST`= Host address for write module in akka cluster <br/>
     `CLUSTER_WRITE_PORT`= TCP port for write module in akka cluster
     
     `CLUSTER_SEED_WRITE_ADDRESS`= Full address for write module in akka cluster <br/>
