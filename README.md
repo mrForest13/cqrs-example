@@ -23,9 +23,9 @@ You can specify environment variables via .env file (sample file in main directo
     `ELASTIC_HOST`= Host address for elasticsearch instance <br/>
     `ELASTIC_PORT`= TCP port for elasticsearch instance
     
-    `DB_USER`= Mysql database username 
-    `DB_PASSWORD`= Mysql database user password 
-    `DB_NAME`= Mysql database name
+    `DB_USER`= Mysql database username <br/>
+    `DB_PASSWORD`= Mysql database user password <br/>
+    `DB_NAME`= Mysql database name <br/>
     `DB_URL`= Mysql database address
     
     `CLUSTER_EVENT_HOST`= Host address for event sourcing module in akka cluster <br/>
@@ -34,7 +34,7 @@ You can specify environment variables via .env file (sample file in main directo
     `APP_WRITE_HOST`= Host address for write side application <br/>
     `APP_WRITE_PORT`= TCP port for write side application
 
-    `CLUSTER_WRITE_HOST`= Host address for write module in akka cluster    
+    `CLUSTER_WRITE_HOST`= Host address for write module in akka cluster <br/>    
     `CLUSTER_WRITE_PORT`= TCP port for write module in akka cluster
     
     `CLUSTER_SEED_WRITE_ADDRESS`= Full address for write module in akka cluster <br/>
