@@ -31,7 +31,7 @@ You can specify environment variables via .env file (sample file in main directo
     `CLUSTER_EVENT_HOST`= Host address for event sourcing module in akka cluster <br/>
     `CLUSTER_EVENT_PORT`= TCP port for event sourcing module in akka cluster
     
-    `APP_WRITE_HOST`= Host address for write side application
+    `APP_WRITE_HOST`= Host address for write side application <br/>
     `APP_WRITE_PORT`= TCP port for write side application
 
     `CLUSTER_WRITE_HOST`= Host address for write module in akka cluster <br/>    
