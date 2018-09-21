@@ -2,51 +2,67 @@ import sbt._
 
 object Dependencies {
 
-  val config = Seq(
+  lazy val config = Seq(
     "com.typesafe"          % "config"      % Version.config,
     "com.github.pureconfig" %% "pureconfig" % Version.pureConfig
   )
 
-  val akka = Seq(
-    "com.typesafe.akka" %% "akka-actor"           % Version.akka,
-    "com.typesafe.akka" %% "akka-slf4j"           % Version.akka,
-    "com.typesafe.akka" %% "akka-stream"          % Version.akka,
-    "com.typesafe.akka" %% "akka-http"            % Version.akkaHttp,
-    "com.typesafe.akka" %% "akka-http-spray-json" % Version.akkaHttp
+  lazy val akka = Seq(
+    "com.typesafe.akka" %% "akka-actor"   % Version.akka,
+    "com.typesafe.akka" %% "akka-cluster" % Version.akka,
+    "com.typesafe.akka" %% "akka-slf4j"   % Version.akka,
+    "com.typesafe.akka" %% "akka-stream"  % Version.akka,
+    "com.typesafe.akka" %% "akka-testkit" % Version.akka % Test
   )
 
-  val db = Seq(
+  lazy val akkaHttp = Seq(
+    "com.typesafe.akka" %% "akka-http"            % Version.akkaHttp,
+    "com.typesafe.akka" %% "akka-http-spray-json" % Version.akkaHttp,
+    "com.typesafe.akka" %% "akka-http-testkit"    % Version.akkaHttp % Test
+  )
+
+  lazy val mysql = Seq(
     "mysql"              % "mysql-connector-java" % Version.mysql,
     "com.typesafe.slick" %% "slick"               % Version.slick,
-    "com.typesafe.slick" %% "slick-hikaricp"      % Version.slick
+    "com.typesafe.slick" %% "slick-hikaricp"      % Version.slick,
+    "com.h2database"     % "h2"                   % Version.h2 % Test
   )
 
-  val elastic4s = Seq(
+  lazy val elastic4s = Seq(
     "com.sksamuel.elastic4s" %% "elastic4s-core"       % Version.elastic4s,
     "com.sksamuel.elastic4s" %% "elastic4s-http"       % Version.elastic4s,
     "com.sksamuel.elastic4s" %% "elastic4s-spray-json" % Version.elastic4s
   )
 
-  val logging = Seq(
+  lazy val logging = Seq(
     "com.typesafe.scala-logging" %% "scala-logging"  % Version.scalaLogging,
     "ch.qos.logback"             % "logback-classic" % Version.logback
   )
 
-  val other = Seq(
+  lazy val wix = Seq(
+    "com.wix" %% "accord-core"      % Version.wix,
+    "com.wix" %% "accord-scalatest" % Version.wix % Test
+  )
+
+  lazy val other = Seq(
     "com.github.swagger-akka-http" %% "swagger-akka-http" % Version.swagger,
-    "ch.megard"                    %% "akka-http-cors"    % Version.cors,
-    "com.wix"                      %% "accord-core"       % Version.wix
+    "ch.megard"                    %% "akka-http-cors"    % Version.cors
   )
 
-  val test = Seq(
-    "org.scalatest"     %% "scalatest"        % Version.scalaTest % Test,
-    "org.scalamock"     %% "scalamock"        % Version.scalaMock % Test,
-    "com.typesafe.akka" %% "akka-testkit"     % Version.akka      % Test,
-    "com.wix"           %% "accord-scalatest" % Version.wix       % Test,
-    "com.h2database"    % "h2"                % Version.h2        % Test
+  lazy val test = Seq(
+    "org.scalatest" %% "scalatest" % Version.scalaTest % Test,
+    "org.scalamock" %% "scalamock" % Version.scalaMock % Test
   )
 
-  lazy val all: Seq[ModuleID] = config ++ akka ++ db ++ elastic4s ++ logging ++ other ++ test
+  lazy val common: Seq[ModuleID] = akka ++ akkaHttp ++ logging ++ wix ++ test
+
+  lazy val eventSourcing: Seq[ModuleID] = config ++ akka ++ elastic4s ++ logging ++ test
+
+  lazy val read
+    : Seq[ModuleID] = config ++ akka ++ akkaHttp ++ elastic4s ++ logging ++ wix ++ other ++ test
+
+  lazy val write
+    : Seq[ModuleID] = config ++ akka ++ akkaHttp ++ mysql ++ logging ++ wix ++ other ++ test
 }
 
 object Version {
@@ -54,7 +70,7 @@ object Version {
   val config       = "1.3.3"
   val pureConfig   = "0.9.2"
   val akka         = "2.5.15"
-  val akkaHttp     = "10.1.4"
+  val akkaHttp     = "10.1.5"
   val playJson     = "2.6.10"
   val akkaJson     = "1.21.0"
   val mysql        = "5.1.46"
