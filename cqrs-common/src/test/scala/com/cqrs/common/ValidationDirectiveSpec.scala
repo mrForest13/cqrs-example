@@ -39,8 +39,6 @@ class ValidationDirectiveSpec extends FlatSpec with Matchers with ScalatestRoute
         val response       = responseAs[String]
         val parsedResponse = response.parseJson
 
-        println(parsedResponse)
-
         parsedResponse shouldEqual responseJsonString.parseJson
         status shouldEqual StatusCodes.UnprocessableEntity
       }

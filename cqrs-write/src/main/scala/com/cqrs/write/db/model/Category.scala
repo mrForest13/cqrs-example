@@ -2,7 +2,8 @@ package com.cqrs.write.db.model
 
 import java.sql.Timestamp
 
-import com.cqrs.write.db.{Entity, Id}
+import com.cqrs.write.db.BaseEntity
+import com.cqrs.write.db.`type`.Id
 import com.cqrs.write.http.model.CategoryContent
 
 final case class Category(
@@ -10,7 +11,7 @@ final case class Category(
   name: String,
   updatedDate: Option[Timestamp] = None,
   createdDate: Option[Timestamp] = None)
-    extends Entity[Category] {
+    extends BaseEntity[Category] {
 
   def this(content: CategoryContent) {
     this(None, content.name)

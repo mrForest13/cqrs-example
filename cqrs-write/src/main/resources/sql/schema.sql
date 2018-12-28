@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.22, for Linux (x86_64)
 --
--- Host: localhost    Database: iceo_test
+-- Host: localhost    Database: cqrs_example
 -- ------------------------------------------------------
 -- Server version	5.7.22-0ubuntu0.17.10.1
 

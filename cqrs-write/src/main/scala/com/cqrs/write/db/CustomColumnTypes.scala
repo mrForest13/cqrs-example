@@ -1,6 +1,6 @@
 package com.cqrs.write.db
 
-import com.cqrs.write.db.`type`.Language
+import com.cqrs.write.db.`type`.{Id, Language}
 import slick.ast.BaseTypedType
 import slick.jdbc.JdbcType
 

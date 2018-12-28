@@ -2,7 +2,7 @@ import sbt.Keys.scalacOptions
 
 lazy val commonSettings = Seq(
   organization := "com.example",
-  version := "0.1.0",
+  version := sys.env.getOrElse("VERSION", "0.1.0"),
   scalaVersion := Version.scala
 )
 
@@ -36,11 +36,6 @@ lazy val assemblyWriteSideSettings = Seq(
   assemblyJarName in assembly := "cqrs-write.jar",
 )
 
-lazy val assemblyEventSourcingSettings = Seq(
-  mainClass in assembly := Some("com.cqrs.event.AppLauncher"),
-  assemblyJarName in assembly := "cqrs-event.jar",
-)
-
 lazy val options = Seq(
   "-deprecation",
   "-encoding",
@@ -61,9 +56,9 @@ lazy val cqrs = (project in file("."))
   .settings(
     name := "cqrs",
     commonSettings,
-    addCommandAlias("docker", ";cqrs-read/docker;cqrs-write/docker;cqrs-event/docker")
+    addCommandAlias("docker", ";cqrs-read/docker;cqrs-write/docker;cqrs-read/docker")
   )
-  .aggregate(`cqrs-read`, `cqrs-write`, `cqrs-event`)
+  .aggregate(`cqrs-read`, `cqrs-write`)
 
 lazy val `cqrs-common` = project
   .settings(
@@ -71,19 +66,6 @@ lazy val `cqrs-common` = project
     commonSettings,
     scalacOptions ++= options,
     libraryDependencies ++= Dependencies.common
-  )
-
-lazy val `cqrs-event` = project
-  .dependsOn(`cqrs-common`)
-  .enablePlugins(DockerPlugin)
-  .settings(
-    name := "cqrs-event",
-    commonSettings,
-    assemblyEventSourcingSettings,
-    dockerSettings,
-    scalacOptions ++= options,
-    libraryDependencies ++= Dependencies.eventSourcing,
-    parallelExecution in Test := false,
   )
 
 lazy val `cqrs-read` = project

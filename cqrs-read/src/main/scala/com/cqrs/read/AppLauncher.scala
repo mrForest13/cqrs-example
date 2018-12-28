@@ -11,12 +11,13 @@ object AppLauncher
     with BootedCore
     with DatabaseLayer
     with ServiceLayer
+    with EventHandlerLayer
     with QueryHandlerLayer
-    with RestApiLayer {
+    with ApiLayer {
 
   logger.info(s"Initializing REST api ...]")
 
-  val bindingFuture = Http().bindAndHandle(log(routes), host, port)
+  val bindingFuture = Http().bindAndHandle(log(routes), apiAddress.getHost, apiAddress.getPort)
 
   bindingFuture.onComplete {
     case Failure(th) =>

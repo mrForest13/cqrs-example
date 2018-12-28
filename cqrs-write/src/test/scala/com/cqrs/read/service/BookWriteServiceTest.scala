@@ -2,45 +2,41 @@ package com.cqrs.read.service
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.stream.ActorMaterializer
-import akka.testkit.{ImplicitSender, TestKit}
+import akka.testkit.TestKit
 import com.cqrs.common.error.NotFoundException
-import com.cqrs.common.event.{EventSuccess, NewBookAddedEvent}
+import com.cqrs.common.event.{EventSuccess, BookAddedEvent}
 import com.cqrs.read.{DatabaseTest, ExampleObject}
 import com.cqrs.write.Core
-import com.cqrs.write.db.Id
+import com.cqrs.write.db.`type`.Id
 import com.cqrs.write.db.model.{Author, Book, Category}
-import com.cqrs.write.handler.EventHandlerComponent
+import com.cqrs.write.handler.BookEventHandler
 import com.cqrs.write.service._
 import org.scalamock.scalatest.MockFactory
+import com.softwaremill.tagging._
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 import scala.concurrent.ExecutionContext
 
 class BookWriteServiceTest
     extends TestKit(ActorSystem("cqrs-system-test"))
-    with ImplicitSender
     with MockFactory
     with Core
     with DatabaseTest
-    with EventHandlerComponent
-    with AuthorServiceComponent
-    with CategoryServiceComponent
-    with BookServiceComponent
     with BeforeAndAfterEach
     with BeforeAndAfterAll {
 
   implicit lazy val executionContext: ExecutionContext = system.dispatcher
   implicit lazy val materializer: ActorMaterializer    = ActorMaterializer()
 
-  val eventHandler: ActorRef = system.actorOf(Props(new Actor {
+  val eventHandler: ActorRef @@ BookEventHandler = system.actorOf(Props(new Actor {
     override def receive: Receive = {
-      case _: NewBookAddedEvent => sender ! EventSuccess("200")
+      case _: BookAddedEvent => sender ! EventSuccess("200")
     }
-  }))
+  })).taggedWith[BookEventHandler]
 
-  val authorService: AuthorService     = new AuthorServiceImpl
-  val categoryService: CategoryService = new CategoryServiceImpl
-  val bookService: BookService         = new BookServiceImpl
+  val authorService: AuthorService     = new AuthorServiceImpl(authorDao)
+  val categoryService: CategoryService = new CategoryServiceImpl(categoryDao)
+  val bookService: BookService         = new BookServiceImpl(eventHandler, authorDao, categoryDao, bookDao)
 
   override def beforeEach(): Unit = {
     authorDao.initScheme()

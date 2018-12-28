@@ -11,6 +11,7 @@ final case class Config(
   app: AppConfig,
   http: HttpConfig,
   elastic: ElasticConfig,
+  cluster: ClusterConfig
 )
 
 final case class AppConfig(
@@ -29,3 +30,14 @@ final case class ElasticConfig(
 ) {
   def node: ElasticNodeEndpoint = ElasticNodeEndpoint(protocol, host, port, None)
 }
+
+final case class ClusterConfig(
+  seeds: SeedsConfig,
+  host: String,
+  port: Int
+)
+
+final case class SeedsConfig(
+  cqrsWrite: String,
+  cqrsRead: String
+)

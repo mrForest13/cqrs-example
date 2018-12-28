@@ -13,8 +13,7 @@ final case class Config(
 )
 
 final case class AppConfig(
-  actorSystem: String,
-  dbConfigFile: String
+  actorSystem: String
 )
 
 final case class HttpConfig(
@@ -23,7 +22,6 @@ final case class HttpConfig(
 )
 
 final case class ClusterConfig(
-  eventHandlerRouterName: String,
   seeds: SeedsConfig,
   host: String,
   port: Int
@@ -31,5 +29,5 @@ final case class ClusterConfig(
 
 final case class SeedsConfig(
   cqrsWrite: String,
-  cqrsEvent: String
+  cqrsRead: String
 )

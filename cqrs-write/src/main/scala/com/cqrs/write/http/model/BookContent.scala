@@ -1,7 +1,5 @@
 package com.cqrs.write.http.model
-
-import com.cqrs.write.db.Id
-import com.cqrs.write.db.`type`.Language
+import com.cqrs.write.db.`type`.{Id, Language}
 import com.cqrs.write.db.model.Category
 import spray.json.RootJsonFormat
 import spray.json.DefaultJsonProtocol._

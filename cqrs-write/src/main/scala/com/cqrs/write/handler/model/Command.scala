@@ -1,6 +1,5 @@
 package com.cqrs.write.handler.model
-
-import com.cqrs.write.db.Id
+import com.cqrs.write.db.`type`.Id
 import com.cqrs.write.db.model.Author
 import com.cqrs.write.http.model.{AuthorContent, BookContent, CategoryContent}
 

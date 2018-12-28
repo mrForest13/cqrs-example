@@ -2,8 +2,8 @@ package com.cqrs.write.db.model
 
 import java.sql.Timestamp
 
-import com.cqrs.write.db.{Entity, Id}
-import com.cqrs.write.db.`type`.Language
+import com.cqrs.write.db.BaseEntity
+import com.cqrs.write.db.`type`.{Id, Language}
 import com.cqrs.write.http.model.BookContent
 
 final case class Book(
@@ -16,33 +16,19 @@ final case class Book(
   description: String,
   updatedDate: Option[Timestamp] = None,
   createdDate: Option[Timestamp] = None)
-    extends Entity[Book] {
+    extends BaseEntity[Book] {
 
   def this(authorId: Id[Author], content: BookContent) = {
-    this(None,
-         content.title,
-         authorId,
-         content.publisher,
-         content.language,
-         content.categoryId,
-         content.description)
+    this(None, content.title, authorId, content.publisher, content.language, content.categoryId, content.description)
   }
 
-  def withId(id: Id[Book]):Book = copy(id = Some(id))
+  def withId(id: Id[Book]): Book = this.copy(id = Some(id))
 }
 
 object Book {
 
-  type dbRow = (
-    Option[Id[Book]],
-    String,
-    Id[Author],
-    String,
-    Language,
-    Id[Category],
-    String,
-    Option[Timestamp],
-    Option[Timestamp])
+  type dbRow =
+    (Option[Id[Book]], String, Id[Author], String, Language, Id[Category], String, Option[Timestamp], Option[Timestamp])
 
   val construct: dbRow => Book = {
     case (id, title, authorId, publisher, language, categoryId, description, _, _) =>

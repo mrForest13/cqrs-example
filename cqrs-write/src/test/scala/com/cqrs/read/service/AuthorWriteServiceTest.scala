@@ -2,29 +2,27 @@ package com.cqrs.read.service
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.testkit.{ImplicitSender, TestKit}
+import akka.testkit.TestKit
 import com.cqrs.read.{DatabaseTest, ExampleObject}
 import com.cqrs.write.Core
-import com.cqrs.write.db.Id
+import com.cqrs.write.db.`type`.Id
 import com.cqrs.write.db.model.Author
-import com.cqrs.write.service.{AuthorService, AuthorServiceComponent}
+import com.cqrs.write.service.{AuthorService, AuthorServiceImpl}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 import scala.concurrent.ExecutionContext
 
 class AuthorWriteServiceTest
     extends TestKit(ActorSystem("cqrs-system-test"))
-    with ImplicitSender
     with Core
     with DatabaseTest
-    with AuthorServiceComponent
     with BeforeAndAfterEach
     with BeforeAndAfterAll {
 
   implicit lazy val executionContext: ExecutionContext = system.dispatcher
   implicit lazy val materializer: ActorMaterializer    = ActorMaterializer()
 
-  val authorService: AuthorService = new AuthorServiceImpl
+  val authorService: AuthorService = new AuthorServiceImpl(authorDao)
 
   override def beforeEach(): Unit = {
     authorDao.initScheme()

@@ -2,30 +2,28 @@ package com.cqrs.read.service
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.testkit.{ImplicitSender, TestKit}
+import akka.testkit.TestKit
 import com.cqrs.common.error.ConflictException
 import com.cqrs.read.{DatabaseTest, ExampleObject}
 import com.cqrs.write.Core
-import com.cqrs.write.db.Id
+import com.cqrs.write.db.`type`.Id
 import com.cqrs.write.db.model.Category
-import com.cqrs.write.service.{CategoryService, CategoryServiceComponent}
+import com.cqrs.write.service.{CategoryService, CategoryServiceImpl}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 import scala.concurrent.ExecutionContext
 
 class CategoryWriteServiceText
     extends TestKit(ActorSystem("cqrs-system-test"))
-    with ImplicitSender
     with Core
     with DatabaseTest
-    with CategoryServiceComponent
     with BeforeAndAfterEach
     with BeforeAndAfterAll {
 
   implicit lazy val executionContext: ExecutionContext = system.dispatcher
   implicit lazy val materializer: ActorMaterializer    = ActorMaterializer()
 
-  val categoryService: CategoryService = new CategoryServiceImpl
+  val categoryService: CategoryService = new CategoryServiceImpl(categoryDao)
 
   override def beforeEach(): Unit = {
     categoryDao.initScheme()

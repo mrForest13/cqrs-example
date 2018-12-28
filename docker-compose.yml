@@ -2,7 +2,7 @@ version: '3'
 services:
 
   cqrs.elasticsearch:
-    image: elasticsearch:latest
+    image: elasticsearch:6.5.0
     ports:
       - ${ELASTIC_PORT}:${ELASTIC_PORT}
     networks:
@@ -11,16 +11,18 @@ services:
   cqrs.mysql:
     image: mysql:5.7.22
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./cqrs-write/src/main/resources/sql:/docker-entrypoint-initdb.d/
     ports:
-      - 3308:3306
+      - 3306:3306
     networks:
       - cqrs
 
-  cqrs.write.service:
+  cqrs.write:
     image: com.example/cqrs-write:${VERSION}
     depends_on:
       - cqrs.mysql
@@ -28,48 +30,36 @@ services:
       - ${APP_WRITE_PORT}:${APP_WRITE_PORT}
       - ${CLUSTER_WRITE_PORT}:${CLUSTER_WRITE_PORT}
     environment:
-      - APP_WRITE_HOST=${APP_WRITE_HOST}
-      - APP_WRITE_PORT=${APP_WRITE_PORT}
-      - CLUSTER_WRITE_HOST=${CLUSTER_WRITE_HOST}
-      - CLUSTER_WRITE_PORT=${CLUSTER_WRITE_PORT}
-      - CLUSTER_SEED_EVENT_ADDRESS=${CLUSTER_SEED_EVENT_ADDRESS}
-      - CLUSTER_SEED_WRITE_ADDRESS=${CLUSTER_SEED_WRITE_ADDRESS}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - DB_URL=${DB_URL}
+      APP_WRITE_HOST: ${APP_WRITE_HOST}
+      APP_WRITE_PORT: ${APP_WRITE_PORT}
+      CLUSTER_WRITE_HOST: ${CLUSTER_WRITE_HOST}
+      CLUSTER_WRITE_PORT: ${CLUSTER_WRITE_PORT}
+      CLUSTER_SEED_READ_ADDRESS: ${CLUSTER_SEED_READ_ADDRESS}
+      CLUSTER_SEED_WRITE_ADDRESS: ${CLUSTER_SEED_WRITE_ADDRESS}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_URL: ${DB_URL}
     networks:
       - cqrs
 
-  cqrs.read.service:
+  cqrs.read:
     image: com.example/cqrs-read:${VERSION}
     depends_on:
       - cqrs.elasticsearch
     ports:
       - ${APP_READ_PORT}:${APP_READ_PORT}
+      - ${CLUSTER_READ_PORT}:${CLUSTER_READ_PORT}
     environment:
-      - APP_READ_HOST=${APP_READ_HOST}
-      - APP_READ_PORT=${APP_READ_PORT}
-      - ELASTIC_PROTOCOL=${ELASTIC_PROTOCOL}
-      - ELASTIC_HOST=${ELASTIC_HOST}
-      - ELASTIC_PORT=${ELASTIC_PORT}
-    networks:
-      - cqrs
-
-  cqrs.event.service:
-    image: com.example/cqrs-event:${VERSION}
-    depends_on:
-      - cqrs.elasticsearch
-    ports:
-      - ${CLUSTER_EVENT_PORT}:${CLUSTER_EVENT_PORT}
-    environment:
-      - CLUSTER_EVENT_HOST=${CLUSTER_EVENT_HOST}
-      - CLUSTER_EVENT_PORT=${CLUSTER_EVENT_PORT}
-      - CLUSTER_SEED_EVENT_ADDRESS=${CLUSTER_SEED_EVENT_ADDRESS}
-      - CLUSTER_SEED_WRITE_ADDRESS=${CLUSTER_SEED_WRITE_ADDRESS}
-      - ELASTIC_PROTOCOL=${ELASTIC_PROTOCOL}
-      - ELASTIC_HOST=${ELASTIC_HOST}
-      - ELASTIC_PORT=${ELASTIC_PORT}
+      APP_READ_HOST: ${APP_READ_HOST}
+      APP_READ_PORT: ${APP_READ_PORT}
+      CLUSTER_READ_HOST: ${CLUSTER_READ_HOST}
+      CLUSTER_READ_PORT: ${CLUSTER_READ_PORT}
+      CLUSTER_SEED_READ_ADDRESS: ${CLUSTER_SEED_READ_ADDRESS}
+      CLUSTER_SEED_WRITE_ADDRESS: ${CLUSTER_SEED_WRITE_ADDRESS}
+      ELASTIC_PROTOCOL: ${ELASTIC_PROTOCOL}
+      ELASTIC_HOST: ${ELASTIC_HOST}
+      ELASTIC_PORT: ${ELASTIC_PORT}
     networks:
       - cqrs
 

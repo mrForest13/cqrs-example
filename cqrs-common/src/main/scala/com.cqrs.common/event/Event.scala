@@ -2,7 +2,7 @@ package com.cqrs.common.event
 
 sealed trait Event
 
-final case class NewBookAddedEvent(
+final case class BookAddedEvent(
   id: String,
   title: String,
   author: String,

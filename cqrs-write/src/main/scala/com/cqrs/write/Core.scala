@@ -6,12 +6,16 @@ import akka.routing.FromConfig
 import akka.stream.ActorMaterializer
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
 import com.cqrs.write.config.{AppConfig, Config}
-import com.cqrs.write.db.dao.component._
+import com.cqrs.write.db.dao.{AuthorDao, BookDao, CategoryDao}
 import com.cqrs.write.db.{DatabaseContext, HasJdbcProfile}
 import com.cqrs.write.handler._
+import com.cqrs.write.http._
 import com.cqrs.write.http.error.ExceptionHandlerDirective._
-import com.cqrs.write.http.{BookRestApi, RestApi, SwaggerDocRestApi}
 import com.cqrs.write.service._
+import com.google.common.net.HostAndPort
+import com.softwaremill.macwire._
+import com.softwaremill.macwire.akkasupport._
+import com.softwaremill.tagging._
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 import slick.basic.DatabaseConfig
@@ -42,73 +46,81 @@ trait BootedCore extends Core with StrictLogging {
   }
 }
 
-trait DatabaseLayer
-    extends HasJdbcProfile
-    with DatabaseContext
-    with AuthorDaoComponent
-    with CategoryDaoComponent
-    with BookDaoComponent {
+trait DatabaseLayer extends HasJdbcProfile with DatabaseContext {
 
   this: Core =>
 
   val databaseConfig: DatabaseConfig[JdbcProfile] =
-    DatabaseConfig.forConfig[JdbcProfile]("slick", ConfigFactory.load(config.app.dbConfigFile))
+    DatabaseConfig.forConfig[JdbcProfile]("slick", ConfigFactory.load("database"))
 
   val profile = databaseConfig.profile
 
   import profile.api._
 
-  val db: Database = databaseConfig.db
+  implicit val db: Database = databaseConfig.db
 
-  val authorDao: AuthorDao     = new AuthorDao()
-  val categoryDao: CategoryDao = new CategoryDao()
-  val bookDao: BookDao         = new BookDao()
+  val authorDao: AuthorDao     = wire[AuthorDao]
+  val categoryDao: CategoryDao = wire[CategoryDao]
+  val bookDao: BookDao         = wire[BookDao]
+
+  scala.sys.addShutdownHook {
+    db.close()
+  }
 }
 
-trait EventHandlerLayer extends EventHandlerComponent {
+trait EventHandlerLayer {
 
   this: Core =>
 
-  private val routeName: String = config.cluster.eventHandlerRouterName
+  private val routeName: String = BookEventHandler.routeName
 
-  val eventHandler: ActorRef = system.actorOf(FromConfig.props(), routeName)
+  val bookEventHandler: ActorRef @@ BookEventHandler =
+    system.actorOf(FromConfig.props(), routeName).taggedWith[BookEventHandler]
 }
 
-trait ServiceLayer
-    extends AuthorServiceComponent
-    with CategoryServiceComponent
-    with BookServiceComponent {
+trait ServiceLayer {
 
   this: DatabaseLayer with EventHandlerLayer with Core =>
 
-  val authorService: AuthorService     = new AuthorServiceImpl
-  val categoryService: CategoryService = new CategoryServiceImpl
-  val bookService: BookService         = new BookServiceImpl
+  val authorService: AuthorService     = wire[AuthorServiceImpl]
+  val categoryService: CategoryService = wire[CategoryServiceImpl]
+  val bookService: BookService         = wire[BookServiceImpl]
 }
 
-trait CommandHandlerLayer extends CommandHandlerComponent {
+trait CommandHandlerLayer {
 
   this: ServiceLayer with Core =>
 
-  val commandHandler: ActorRef = system.actorOf(CommandHandler.apply, CommandHandler.name)
+  val authorCommandHandler: ActorRef @@ AuthorCommandHandler =
+    wireActor[AuthorCommandHandler](AuthorCommandHandler.name).taggedWith[AuthorCommandHandler]
+  val categoryCommandHandler: ActorRef @@ CategoryCommandHandler =
+    wireActor[CategoryCommandHandler](CategoryCommandHandler.name).taggedWith[CategoryCommandHandler]
+  val bookCommandHandler: ActorRef @@ BookCommandHandler =
+    wireActor[BookCommandHandler](BookCommandHandler.name).taggedWith[BookCommandHandler]
 }
 
-trait RestApiLayer extends RestApi with RouteConcatenation {
+trait ApiLayer extends Api with RouteConcatenation {
 
   this: CommandHandlerLayer with Core =>
 
-  val host: String = config.http.host
-  val port: Int    = config.http.port
+  private val host: String = config.http.host
+  private val port: Int    = config.http.port
 
-  val swaggerDocRestApi: RestApi = new SwaggerDocRestApi(host, port)
+  val apiAddress: HostAndPort = HostAndPort.fromParts(host, port)
 
-  val bookRestApi: RestApi = new BookRestApi(commandHandler)
+  val swaggerApi: Api = wire[SwaggerApi]
+
+  val authorApi: Api   = wire[AuthorApi]
+  val categoryApi: Api = wire[CategoryApi]
+  val bookApi: Api     = wire[BookApi]
 
   val routes: Route = cors() {
     handleExceptions(exceptionHandler) {
       Seq(
-        bookRestApi,
-        swaggerDocRestApi
+        authorApi,
+        categoryApi,
+        bookApi,
+        swaggerApi
       ).map(_.routes)
         .reduceLeft(_ ~ _)
     }

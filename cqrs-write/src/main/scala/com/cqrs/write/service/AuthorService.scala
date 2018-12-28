@@ -1,9 +1,9 @@
 package com.cqrs.write.service
 
-import com.cqrs.write.Core
-import com.cqrs.write.db.{DatabaseContext, Id}
-import com.cqrs.write.db.dao.component.AuthorDaoComponent
+import com.cqrs.write.db.`type`.Id
+import com.cqrs.write.db.dao.AuthorDao
 import com.cqrs.write.db.model.Author
+import slick.jdbc.JdbcBackend
 
 import scala.concurrent.Future
 
@@ -11,18 +11,11 @@ trait AuthorService {
   def add(author: Author): Future[Id[Author]]
 }
 
-trait AuthorServiceComponent {
+class AuthorServiceImpl(authorDao: AuthorDao)(implicit db: JdbcBackend#Database) extends AuthorService {
 
-  this: AuthorDaoComponent with DatabaseContext with Core =>
-
-  val authorService: AuthorService
-
-  class AuthorServiceImpl extends AuthorService {
-
-    def add(author: Author): Future[Id[Author]] = {
-      db.run {
-        authorDao.insert(author)
-      }
+  def add(author: Author): Future[Id[Author]] = {
+    db.run {
+      authorDao.insert(author)
     }
   }
 }

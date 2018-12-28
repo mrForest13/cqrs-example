@@ -2,7 +2,8 @@ package com.cqrs.write.db.model
 
 import java.sql.Timestamp
 
-import com.cqrs.write.db.{Entity, Id}
+import com.cqrs.write.db.BaseEntity
+import com.cqrs.write.db.`type`.Id
 import com.cqrs.write.http.model.AuthorContent
 
 final case class Author(
@@ -11,7 +12,7 @@ final case class Author(
   lastName: String,
   updatedDate: Option[Timestamp] = None,
   createdDate: Option[Timestamp] = None)
-    extends Entity[Author] {
+    extends BaseEntity[Author] {
 
   def this(content: AuthorContent) {
     this(None, content.firstName, content.lastName)

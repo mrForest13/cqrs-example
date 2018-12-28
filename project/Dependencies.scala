@@ -39,6 +39,11 @@ object Dependencies {
     "ch.qos.logback"             % "logback-classic" % Version.logback
   )
 
+  lazy val macros = Seq(
+    "com.softwaremill.macwire" %% "macros"     % Version.macros,
+    "com.softwaremill.macwire" %% "macrosakka" % Version.macros
+  )
+
   lazy val wix = Seq(
     "com.wix" %% "accord-core"      % Version.wix,
     "com.wix" %% "accord-scalatest" % Version.wix % Test
@@ -46,6 +51,7 @@ object Dependencies {
 
   lazy val other = Seq(
     "com.github.swagger-akka-http" %% "swagger-akka-http" % Version.swagger,
+    "com.softwaremill.common"      %% "tagging"           % Version.tags,
     "ch.megard"                    %% "akka-http-cors"    % Version.cors
   )
 
@@ -56,13 +62,9 @@ object Dependencies {
 
   lazy val common: Seq[ModuleID] = akka ++ akkaHttp ++ logging ++ wix ++ test
 
-  lazy val eventSourcing: Seq[ModuleID] = config ++ akka ++ elastic4s ++ logging ++ test
+  lazy val read: Seq[ModuleID] = config ++ akka ++ akkaHttp ++ elastic4s ++ logging ++ macros ++ wix ++ other ++ test
 
-  lazy val read
-    : Seq[ModuleID] = config ++ akka ++ akkaHttp ++ elastic4s ++ logging ++ wix ++ other ++ test
-
-  lazy val write
-    : Seq[ModuleID] = config ++ akka ++ akkaHttp ++ mysql ++ logging ++ wix ++ other ++ test
+  lazy val write: Seq[ModuleID] = config ++ akka ++ akkaHttp ++ mysql ++ logging ++ wix ++ macros ++ other ++ test
 }
 
 object Version {
@@ -79,7 +81,9 @@ object Version {
   val scalaLogging = "3.9.0"
   val logback      = "1.2.3"
   val swagger      = "1.0.0"
+  val tags         = "2.2.1"
   val cors         = "0.3.0"
+  val macros       = "2.3.1"
   val wix          = "0.7.2"
   val scalaTest    = "3.0.4"
   val scalaMock    = "4.0.0"

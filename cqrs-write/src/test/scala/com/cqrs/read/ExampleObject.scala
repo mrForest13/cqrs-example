@@ -1,7 +1,5 @@
 package com.cqrs.read
-
-import com.cqrs.write.db.Id
-import com.cqrs.write.db.`type`.Language
+import com.cqrs.write.db.`type`.{Id, Language}
 import com.cqrs.write.http.model.{AuthorContent, BookContent, CategoryContent}
 
 object ExampleObject {
